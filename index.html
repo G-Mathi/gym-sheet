@@ -8,28 +8,32 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" href="icons/icon-192.png">
-<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
 <style>
 :root{
+  color-scheme:light;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
   --bg:#F2F3F0; --surface:#FFFFFF; --ink:#16181A; --muted:#5D645F; --line:#DADDD7;
   --accent:#1E4FD8; --accent-ink:#FFFFFF; --done:#1C7A4A; --done-bg:#E3F2E9; --chip:#E8EBF7; --bad:#C1391F;
   --font-display:"Barlow Condensed","Arial Narrow",sans-serif; --font-body:"Barlow",system-ui,-apple-system,sans-serif;
 }
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
     --bg:#111315; --surface:#1A1D20; --ink:#ECEEEA; --muted:#9AA19C; --line:#2C3034;
-    --accent:#7C9BFF; --accent-ink:#0E1220; --done:#5FD198; --done-bg:#16301F; --chip:#20283F; --bad:#FF7A68;
+    --done:#5FD198; --done-bg:#16301F; --chip:#20283F; --bad:#FF7A68;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#111315; --surface:#1A1D20; --ink:#ECEEEA; --muted:#9AA19C; --line:#2C3034;
-  --accent:#7C9BFF; --accent-ink:#0E1220; --done:#5FD198; --done-bg:#16301F; --chip:#20283F; --bad:#FF7A68;
+  --done:#5FD198; --done-bg:#16301F; --chip:#20283F; --bad:#FF7A68;
 }
 *{box-sizing:border-box}
+img{max-width:100%}
+[hidden]:not([hidden=until-found i]){display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.4}
 .wrap{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:16px 48px}
 header h1{font-family:var(--font-display);font-weight:700;font-size:30px;letter-spacing:.01em;margin:4px 0 2px;text-transform:uppercase}
@@ -111,7 +115,7 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .hist-row-val{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px;white-space:nowrap}
 .seg{display:flex;gap:6px;margin:4px 0 12px}
 .segbtn{flex:1;font:inherit;font-size:13px;font-weight:700;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:8px;padding:6px 0;cursor:pointer}
-.segbtn[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.segbtn[aria-checked="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .compare-selects{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .compare-selects select{flex:1;font:inherit;font-size:16px;padding:8px 6px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-width:0}
 .compare-selects .vs{font-size:12px;color:var(--muted);font-weight:700}
@@ -125,12 +129,14 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 #settingsView{padding-top:16px}
 .swatches{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 4px}
 .swatch{width:40px;height:40px;border-radius:50%;border:2px solid transparent;background:var(--sw);cursor:pointer;position:relative;padding:0}
-.swatch[aria-selected="true"]{border-color:var(--ink)}
-.swatch[aria-selected="true"]::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.swatch[aria-checked="true"]{border-color:var(--ink)}
+.swatch[aria-checked="true"]::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 .settings-note{color:var(--muted);font-size:14px;margin:18px 0 0}
 @media (max-width:380px){.tab{font-size:15px}.cue,.sets{margin-left:0}}
 @media (prefers-reduced-motion:no-preference){.set,.ex{transition:background .15s,border-color .15s}}
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header class="hdrflex">
@@ -216,6 +222,7 @@ const DAY_OFFSET={mon:0,tue:1,thu:3,fri:4,sat:5}; // days since Monday, Wed/Sun 
 const WEEKDAY_KEY={1:"mon",2:"tue",4:"thu",5:"fri",6:"sat"}; // JS getDay() -> our day key
 
 const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const KEYS={TAB:"gs-tab",HISTORY:"gs-history",VIEW:"gs-view",THEME:"gs-theme",ACCENT:"gs-accent",FONT:"gs-font",LEGACY_TICKS:"gs-ticks"};
 
 function isoDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function todayISO(){return isoDate(new Date())}
@@ -226,22 +233,22 @@ function dayTotal(d){return d.ex.reduce((s,e)=>s+e[1],0)}
 function dayByKey(k){return DAYS.find(x=>x.k===k)}
 
 const todayIdx=(()=>{const w=new Date().getDay();return {1:0,2:1,4:2,5:3,6:4}[w]??null})();
-let cur=store.get("gs-tab"); if(cur==null||!DAYS[cur]) cur=todayIdx??0;
-let history=store.get("gs-history")||{};
+let cur=store.get(KEYS.TAB); if(cur==null||!DAYS[cur]) cur=todayIdx??0;
+let history=store.get(KEYS.HISTORY)||{};
 
 // one-time migration from the old weekday-keyed tick store (pre-history-tracking version)
 (function migrate(){
-  if(store.get("gs-history")) return;
-  const old=store.get("gs-ticks");
+  if(store.get(KEYS.HISTORY)) return;
+  const old=store.get(KEYS.LEGACY_TICKS);
   if(!old) return;
   const wd=WEEKDAY_KEY[new Date().getDay()];
   if(wd && old[wd] && Object.values(old[wd]).some(Boolean)){
     history[todayISO()]={day:wd,ticks:old[wd]};
-    store.set("gs-history",history);
+    store.set(KEYS.HISTORY,history);
   }
 })();
 
-let view=store.get("gs-view")||"train";
+let view=store.get(KEYS.VIEW)||"train";
 
 const viewswEl=document.getElementById("viewsw"), trainViewEl=document.getElementById("trainView"), statsViewEl=document.getElementById("statsView"), historyViewEl=document.getElementById("historyView"), settingsViewEl=document.getElementById("settingsView");
 const tabsEl=document.getElementById("tabs"), dayEl=document.getElementById("day"), gearBtn=document.getElementById("gearBtn");
@@ -262,7 +269,7 @@ const FONTS={
   serif:{display:'Georgia,"Iowan Old Style","Times New Roman",serif',body:'Georgia,"Iowan Old Style","Times New Roman",serif',label:"Serif"}
 };
 function effectiveDark(){
-  const t=store.get("gs-theme")||"auto";
+  const t=store.get(KEYS.THEME)||"auto";
   if(t==="dark") return true;
   if(t==="light") return false;
   return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -282,12 +289,12 @@ function applyFont(key){
   document.documentElement.style.setProperty("--font-display", f.display);
   document.documentElement.style.setProperty("--font-body", f.body);
 }
-applyTheme(store.get("gs-theme")||"auto");
-applyAccent(store.get("gs-accent")||"blue");
-applyFont(store.get("gs-font")||"barlow");
+applyTheme(store.get(KEYS.THEME)||"auto");
+applyAccent(store.get(KEYS.ACCENT)||"blue");
+applyFont(store.get(KEYS.FONT)||"barlow");
 if(window.matchMedia){
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{
-    if((store.get("gs-theme")||"auto")==="auto") applyAccent(store.get("gs-accent")||"blue");
+    if((store.get(KEYS.THEME)||"auto")==="auto") applyAccent(store.get(KEYS.ACCENT)||"blue");
   });
 }
 
@@ -312,14 +319,14 @@ function toggleSet(exIdx,setIdx){
   const dayKey=DAYS[cur].k, iso=todayISO(), id=exIdx+"-"+setIdx;
   if(!history[iso] || history[iso].day!==dayKey) history[iso]={day:dayKey,ticks:{}};
   history[iso].ticks[id]=!history[iso].ticks[id];
-  store.set("gs-history",history);
+  store.set(KEYS.HISTORY,history);
 }
 
-tabsEl.addEventListener("click",e=>{const b=e.target.closest(".tab"); if(!b)return; cur=+b.dataset.i; store.set("gs-tab",cur); renderTabs(); renderDay(); window.scrollTo({top:0});});
+tabsEl.addEventListener("click",e=>{const b=e.target.closest(".tab"); if(!b)return; cur=+b.dataset.i; store.set(KEYS.TAB,cur); renderTabs(); renderDay(); window.scrollTo({top:0});});
 dayEl.addEventListener("click",e=>{const b=e.target.closest(".set"); if(!b)return; toggleSet(+b.dataset.e,+b.dataset.s); renderDay();});
 document.getElementById("reset").addEventListener("click",()=>{
   const iso=todayISO();
-  if(history[iso] && history[iso].day===DAYS[cur].k){ delete history[iso]; store.set("gs-history",history); }
+  if(history[iso] && history[iso].day===DAYS[cur].k){ delete history[iso]; store.set(KEYS.HISTORY,history); }
   renderDay();
 });
 
@@ -350,20 +357,10 @@ function thisWeekStats(){
   return {trained,scheduled:Object.keys(DAY_OFFSET).length};
 }
 function allTimeSessions(){
-  return Object.keys(history).filter(iso=>Object.values(history[iso].ticks).some(Boolean)).length;
+  return sessionList().length;
 }
 function recentSessions(n){
-  return Object.keys(history)
-    .filter(iso=>Object.values(history[iso].ticks).some(Boolean))
-    .sort()
-    .slice(-n)
-    .map(iso=>{
-      const e=history[iso];
-      const dayDef=DAYS.find(x=>x.k===e.day);
-      const total=dayDef?dayTotal(dayDef):Object.keys(e.ticks).length;
-      const done=Object.values(e.ticks).filter(Boolean).length;
-      return {iso,day:e.day,done,total};
-    });
+  return sessionList().slice(-n);
 }
 function renderVolumeChart(sessions){
   if(!sessions.length) return `<p class="empty-hint">No sessions logged yet — tap set boxes on Train to start tracking.</p>`;
@@ -629,9 +626,9 @@ function renderHistory(){
     <h3 class="stats-h">All sessions</h3>
     <div class="hist-list">${dates.length?dates.map(histRow).join(""):'<p class="empty-hint">No sessions logged yet.</p>'}</div>
     <h3 class="stats-h">Compare two periods</h3>
-    <div class="seg" id="cmpType">
-      <button class="segbtn" type="button" data-type="week" aria-selected="${cmpType==="week"}">Week</button>
-      <button class="segbtn" type="button" data-type="month" aria-selected="${cmpType==="month"}">Month</button>
+    <div class="seg" id="cmpType" role="radiogroup" aria-label="Compare by">
+      <button class="segbtn" type="button" role="radio" data-type="week" aria-checked="${cmpType==="week"}">Week</button>
+      <button class="segbtn" type="button" role="radio" data-type="month" aria-checked="${cmpType==="month"}">Month</button>
     </div>
     <div class="compare-selects"><select id="cmpA"></select><span class="vs">vs</span><select id="cmpB"></select></div>
     <div id="cmpResult"></div>
@@ -653,7 +650,7 @@ function renderHistory(){
   document.getElementById("cmpType").addEventListener("click",e=>{
     const b=e.target.closest(".segbtn"); if(!b) return;
     cmpType=b.dataset.type;
-    document.getElementById("cmpType").querySelectorAll(".segbtn").forEach(x=>x.setAttribute("aria-selected", String(x.dataset.type===cmpType)));
+    document.getElementById("cmpType").querySelectorAll(".segbtn").forEach(x=>x.setAttribute("aria-checked", String(x.dataset.type===cmpType)));
     populateCompareSelects();
   });
   document.getElementById("cmpA").addEventListener("change",renderCompare);
@@ -663,38 +660,38 @@ function renderHistory(){
 
 // ---- Settings ----
 function renderSettings(){
-  const theme=store.get("gs-theme")||"auto", accent=store.get("gs-accent")||"blue", font=store.get("gs-font")||"barlow";
+  const theme=store.get(KEYS.THEME)||"auto", accent=store.get(KEYS.ACCENT)||"blue", font=store.get(KEYS.FONT)||"barlow";
   settingsViewEl.innerHTML=`
     <h3 class="stats-h" style="margin-top:0">Theme</h3>
-    <div class="seg" id="themeSeg">
-      <button class="segbtn" type="button" data-v="auto" aria-selected="${theme==="auto"}">Auto</button>
-      <button class="segbtn" type="button" data-v="light" aria-selected="${theme==="light"}">Light</button>
-      <button class="segbtn" type="button" data-v="dark" aria-selected="${theme==="dark"}">Dark</button>
+    <div class="seg" id="themeSeg" role="radiogroup" aria-label="Theme">
+      <button class="segbtn" type="button" role="radio" data-v="auto" aria-checked="${theme==="auto"}">Auto</button>
+      <button class="segbtn" type="button" role="radio" data-v="light" aria-checked="${theme==="light"}">Light</button>
+      <button class="segbtn" type="button" role="radio" data-v="dark" aria-checked="${theme==="dark"}">Dark</button>
     </div>
     <h3 class="stats-h">Accent color</h3>
-    <div class="swatches" id="accentSw">
-      ${Object.keys(ACCENTS).map(k=>`<button class="swatch" type="button" data-v="${k}" aria-selected="${accent===k}" style="--sw:${ACCENTS[k].light}" aria-label="${k}"></button>`).join("")}
+    <div class="swatches" id="accentSw" role="radiogroup" aria-label="Accent color">
+      ${Object.keys(ACCENTS).map(k=>`<button class="swatch" type="button" role="radio" data-v="${k}" aria-checked="${accent===k}" style="--sw:${ACCENTS[k].light}" aria-label="${k}"></button>`).join("")}
     </div>
     <h3 class="stats-h">Font</h3>
-    <div class="seg" id="fontSeg">
-      ${Object.keys(FONTS).map(k=>`<button class="segbtn" type="button" data-v="${k}" aria-selected="${font===k}">${FONTS[k].label}</button>`).join("")}
+    <div class="seg" id="fontSeg" role="radiogroup" aria-label="Font">
+      ${Object.keys(FONTS).map(k=>`<button class="segbtn" type="button" role="radio" data-v="${k}" aria-checked="${font===k}">${FONTS[k].label}</button>`).join("")}
     </div>
     <button class="reset" id="settingsDone" type="button" style="margin-top:20px">Done</button>
     <p class="settings-note">Changes apply instantly and are saved on this device.</p>
   `;
   document.getElementById("themeSeg").addEventListener("click",e=>{
     const b=e.target.closest(".segbtn"); if(!b) return;
-    store.set("gs-theme",b.dataset.v); applyTheme(b.dataset.v); applyAccent(store.get("gs-accent")||"blue");
+    store.set(KEYS.THEME,b.dataset.v); applyTheme(b.dataset.v); applyAccent(store.get(KEYS.ACCENT)||"blue");
     renderSettings();
   });
   document.getElementById("accentSw").addEventListener("click",e=>{
     const b=e.target.closest(".swatch"); if(!b) return;
-    store.set("gs-accent",b.dataset.v); applyAccent(b.dataset.v);
+    store.set(KEYS.ACCENT,b.dataset.v); applyAccent(b.dataset.v);
     renderSettings();
   });
   document.getElementById("fontSeg").addEventListener("click",e=>{
     const b=e.target.closest(".segbtn"); if(!b) return;
-    store.set("gs-font",b.dataset.v); applyFont(b.dataset.v);
+    store.set(KEYS.FONT,b.dataset.v); applyFont(b.dataset.v);
     renderSettings();
   });
   document.getElementById("settingsDone").addEventListener("click",closeSettings);
@@ -716,7 +713,7 @@ function closeSettings(){
 gearBtn.addEventListener("click",()=>{ settingsViewEl.hidden ? openSettings() : closeSettings(); });
 
 function setView(v){
-  view=v; store.set("gs-view",v);
+  view=v; store.set(KEYS.VIEW,v);
   settingsViewEl.hidden=true; gearBtn.setAttribute("aria-pressed","false");
   viewswEl.querySelectorAll(".viewbtn").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.view===v)));
   trainViewEl.hidden = v!=="train";
