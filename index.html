@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Mathi's Gym Sheet</title>
 <meta name="description" content="5-day Upper/Lower + Arms gym tracker">
 <meta name="theme-color" content="#1E4FD8">
@@ -15,6 +15,7 @@
 :root{
   --bg:#F2F3F0; --surface:#FFFFFF; --ink:#16181A; --muted:#5D645F; --line:#DADDD7;
   --accent:#1E4FD8; --accent-ink:#FFFFFF; --done:#1C7A4A; --done-bg:#E3F2E9; --chip:#E8EBF7; --bad:#C1391F;
+  --font-display:"Barlow Condensed","Arial Narrow",sans-serif; --font-body:"Barlow",system-ui,-apple-system,sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -29,29 +30,33 @@
   --accent:#7C9BFF; --accent-ink:#0E1220; --done:#5FD198; --done-bg:#16301F; --chip:#20283F; --bad:#FF7A68;
 }
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.4}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.4}
 .wrap{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:16px 48px}
-header h1{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:30px;letter-spacing:.01em;margin:4px 0 2px;text-transform:uppercase}
+header h1{font-family:var(--font-display);font-weight:700;font-size:30px;letter-spacing:.01em;margin:4px 0 2px;text-transform:uppercase}
 header p{margin:0;color:var(--muted);font-size:14px}
+.hdrflex{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.gearbtn{font-size:20px;line-height:1;background:var(--surface);border:1px solid var(--line);border-radius:10px;width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--ink);cursor:pointer}
+.gearbtn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.gearbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .viewsw{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);display:flex;gap:8px;padding-top:12px;margin-top:8px}
-.viewbtn{flex:1;font:inherit;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:10px;padding:8px 0;cursor:pointer}
+.viewbtn{flex:1;font:inherit;font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:.02em;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:10px;padding:8px 0;cursor:pointer}
 .viewbtn[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .viewbtn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .tabs{position:sticky;top:calc(env(safe-area-inset-top,0px) + 46px);z-index:5;background:var(--bg);display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding-block:12px;margin-top:0}
-.tab{font:inherit;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:17px;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 0 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.1}
-.tab small{font-family:"Barlow",sans-serif;font-weight:500;font-size:11px;text-transform:none;color:var(--muted);margin-top:2px}
+.tab{font:inherit;font-family:var(--font-display);font-weight:700;font-size:17px;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 0 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.tab small{font-family:var(--font-body);font-weight:500;font-size:11px;text-transform:none;color:var(--muted);margin-top:2px}
 .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .tab[aria-selected="true"] small{color:var(--accent-ink);opacity:.85}
 .tab:focus-visible,.set:focus-visible,.reset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .dayhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:8px 0 4px}
-.dayhead h2{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:24px;margin:0;text-transform:uppercase;text-wrap:balance}
+.dayhead h2{font-family:var(--font-display);font-weight:700;font-size:24px;margin:0;text-transform:uppercase;text-wrap:balance}
 .progress{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px;white-space:nowrap}
 .note{color:var(--muted);font-size:14px;margin:0 0 12px}
 ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .ex{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:8px}
 .ex.complete{border-color:var(--done);background:var(--done-bg)}
 .top{display:flex;gap:10px;align-items:flex-start}
-.num{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:18px;color:var(--accent);min-width:28px;font-variant-numeric:tabular-nums}
+.num{font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--accent);min-width:28px;font-variant-numeric:tabular-nums}
 .name{font-weight:600;font-size:17px;line-height:1.25}
 .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .chip{background:var(--chip);border-radius:6px;padding:2px 8px;font-size:14px;font-variant-numeric:tabular-nums;font-weight:500}
@@ -66,13 +71,13 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 #statsView{padding-top:16px}
 .stat-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 8px}
 .stat-tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center}
-.stat-num{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:28px;color:var(--accent);line-height:1}
+.stat-num{font-family:var(--font-display);font-weight:700;font-size:28px;color:var(--accent);line-height:1}
 .stat-label{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.02em}
-.stats-h{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;margin:22px 0 8px;letter-spacing:.01em}
+.stats-h{font-family:var(--font-display);font-weight:700;font-size:16px;text-transform:uppercase;margin:22px 0 8px;letter-spacing:.01em}
 .chart-wrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
 .chart{width:100%;height:140px;display:block}
 .chart .bar{fill:var(--accent)}
-.chart text{fill:var(--muted);font-size:9px;font-family:"Barlow",sans-serif}
+.chart text{fill:var(--muted);font-size:9px;font-family:var(--font-body)}
 .weekgrid{display:grid;grid-template-columns:56px repeat(5,1fr);gap:6px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
 .weekgrid .wk-label{font-size:11px;color:var(--muted)}
 .weekgrid .dow{font-size:11px;color:var(--muted);text-align:center;text-transform:uppercase}
@@ -108,7 +113,7 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .segbtn{flex:1;font:inherit;font-size:13px;font-weight:700;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:8px;padding:6px 0;cursor:pointer}
 .segbtn[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .compare-selects{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.compare-selects select{flex:1;font:inherit;font-size:13px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-width:0}
+.compare-selects select{flex:1;font:inherit;font-size:16px;padding:8px 6px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-width:0}
 .compare-selects .vs{font-size:12px;color:var(--muted);font-weight:700}
 .cmp-table{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:10px}
 .cmp-row{display:grid;grid-template-columns:86px 1fr 1fr 46px;align-items:center;gap:6px;font-size:13px}
@@ -117,14 +122,23 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .cmp-delta.up{color:var(--done)}
 .cmp-delta.down{color:var(--bad)}
 .cmp-delta.flat{color:var(--muted)}
+#settingsView{padding-top:16px}
+.swatches{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 4px}
+.swatch{width:40px;height:40px;border-radius:50%;border:2px solid transparent;background:var(--sw);cursor:pointer;position:relative;padding:0}
+.swatch[aria-selected="true"]{border-color:var(--ink)}
+.swatch[aria-selected="true"]::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.settings-note{color:var(--muted);font-size:14px;margin:18px 0 0}
 @media (max-width:380px){.tab{font-size:15px}.cue,.sets{margin-left:0}}
 @media (prefers-reduced-motion:no-preference){.set,.ex{transition:background .15s,border-color .15s}}
 </style>
 
 <div class="wrap">
-  <header>
-    <h1>Mathi's Gym Sheet</h1>
-    <p>5-day Upper / Lower + Arms · Rest Wed &amp; Sun · Tap a set box when done</p>
+  <header class="hdrflex">
+    <div>
+      <h1>Mathi's Gym Sheet</h1>
+      <p>5-day Upper / Lower + Arms · Rest Wed &amp; Sun · Tap a set box when done</p>
+    </div>
+    <button class="gearbtn" id="gearBtn" type="button" aria-label="Settings">⚙</button>
   </header>
   <nav class="viewsw" role="tablist" id="viewsw">
     <button class="viewbtn" type="button" role="tab" data-view="train" aria-selected="true">Train</button>
@@ -144,6 +158,7 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
   </div>
   <div id="statsView" hidden></div>
   <div id="historyView" hidden></div>
+  <div id="settingsView" hidden></div>
 </div>
 
 <script>
@@ -228,9 +243,53 @@ let history=store.get("gs-history")||{};
 
 let view=store.get("gs-view")||"train";
 
-const viewswEl=document.getElementById("viewsw"), trainViewEl=document.getElementById("trainView"), statsViewEl=document.getElementById("statsView"), historyViewEl=document.getElementById("historyView");
-const tabsEl=document.getElementById("tabs"), dayEl=document.getElementById("day");
+const viewswEl=document.getElementById("viewsw"), trainViewEl=document.getElementById("trainView"), statsViewEl=document.getElementById("statsView"), historyViewEl=document.getElementById("historyView"), settingsViewEl=document.getElementById("settingsView");
+const tabsEl=document.getElementById("tabs"), dayEl=document.getElementById("day"), gearBtn=document.getElementById("gearBtn");
 let historySelectedDate=null, cmpType="week";
+
+// ---- Appearance (theme / accent / font) ----
+const ACCENTS={
+  blue:{light:"#1E4FD8",dark:"#7C9BFF"},
+  green:{light:"#1C7A4A",dark:"#5FD198"},
+  purple:{light:"#5B3A9E",dark:"#C9A6FF"},
+  orange:{light:"#A6510C",dark:"#FFB066"},
+  red:{light:"#B23A1F",dark:"#FF8C7A"},
+  teal:{light:"#0C6E77",dark:"#6FE3EA"}
+};
+const FONTS={
+  barlow:{display:'"Barlow Condensed","Arial Narrow",sans-serif',body:'"Barlow",system-ui,-apple-system,sans-serif',label:"Barlow"},
+  system:{display:'-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif',body:'-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif',label:"System"},
+  serif:{display:'Georgia,"Iowan Old Style","Times New Roman",serif',body:'Georgia,"Iowan Old Style","Times New Roman",serif',label:"Serif"}
+};
+function effectiveDark(){
+  const t=store.get("gs-theme")||"auto";
+  if(t==="dark") return true;
+  if(t==="light") return false;
+  return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+}
+function applyTheme(v){
+  if(v==="light") document.documentElement.setAttribute("data-theme","light");
+  else if(v==="dark") document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.removeAttribute("data-theme");
+}
+function applyAccent(key){
+  const p=ACCENTS[key]||ACCENTS.blue, dark=effectiveDark();
+  document.documentElement.style.setProperty("--accent", dark?p.dark:p.light);
+  document.documentElement.style.setProperty("--accent-ink", dark?"#10131A":"#FFFFFF");
+}
+function applyFont(key){
+  const f=FONTS[key]||FONTS.barlow;
+  document.documentElement.style.setProperty("--font-display", f.display);
+  document.documentElement.style.setProperty("--font-body", f.body);
+}
+applyTheme(store.get("gs-theme")||"auto");
+applyAccent(store.get("gs-accent")||"blue");
+applyFont(store.get("gs-font")||"barlow");
+if(window.matchMedia){
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{
+    if((store.get("gs-theme")||"auto")==="auto") applyAccent(store.get("gs-accent")||"blue");
+  });
+}
 
 function isTrained(iso,dayKey){const e=history[iso];return !!(e && e.day===dayKey && Object.values(e.ticks).some(Boolean))}
 function ticksForToday(dayKey){const e=history[todayISO()];return (e && e.day===dayKey)?e.ticks:{}}
@@ -602,8 +661,63 @@ function renderHistory(){
   populateCompareSelects();
 }
 
+// ---- Settings ----
+function renderSettings(){
+  const theme=store.get("gs-theme")||"auto", accent=store.get("gs-accent")||"blue", font=store.get("gs-font")||"barlow";
+  settingsViewEl.innerHTML=`
+    <h3 class="stats-h" style="margin-top:0">Theme</h3>
+    <div class="seg" id="themeSeg">
+      <button class="segbtn" type="button" data-v="auto" aria-selected="${theme==="auto"}">Auto</button>
+      <button class="segbtn" type="button" data-v="light" aria-selected="${theme==="light"}">Light</button>
+      <button class="segbtn" type="button" data-v="dark" aria-selected="${theme==="dark"}">Dark</button>
+    </div>
+    <h3 class="stats-h">Accent color</h3>
+    <div class="swatches" id="accentSw">
+      ${Object.keys(ACCENTS).map(k=>`<button class="swatch" type="button" data-v="${k}" aria-selected="${accent===k}" style="--sw:${ACCENTS[k].light}" aria-label="${k}"></button>`).join("")}
+    </div>
+    <h3 class="stats-h">Font</h3>
+    <div class="seg" id="fontSeg">
+      ${Object.keys(FONTS).map(k=>`<button class="segbtn" type="button" data-v="${k}" aria-selected="${font===k}">${FONTS[k].label}</button>`).join("")}
+    </div>
+    <button class="reset" id="settingsDone" type="button" style="margin-top:20px">Done</button>
+    <p class="settings-note">Changes apply instantly and are saved on this device.</p>
+  `;
+  document.getElementById("themeSeg").addEventListener("click",e=>{
+    const b=e.target.closest(".segbtn"); if(!b) return;
+    store.set("gs-theme",b.dataset.v); applyTheme(b.dataset.v); applyAccent(store.get("gs-accent")||"blue");
+    renderSettings();
+  });
+  document.getElementById("accentSw").addEventListener("click",e=>{
+    const b=e.target.closest(".swatch"); if(!b) return;
+    store.set("gs-accent",b.dataset.v); applyAccent(b.dataset.v);
+    renderSettings();
+  });
+  document.getElementById("fontSeg").addEventListener("click",e=>{
+    const b=e.target.closest(".segbtn"); if(!b) return;
+    store.set("gs-font",b.dataset.v); applyFont(b.dataset.v);
+    renderSettings();
+  });
+  document.getElementById("settingsDone").addEventListener("click",closeSettings);
+}
+let settingsPrevView="train";
+function openSettings(){
+  settingsPrevView=view;
+  trainViewEl.hidden=true; statsViewEl.hidden=true; historyViewEl.hidden=true;
+  settingsViewEl.hidden=false;
+  viewswEl.querySelectorAll(".viewbtn").forEach(b=>b.setAttribute("aria-selected","false"));
+  gearBtn.setAttribute("aria-pressed","true");
+  renderSettings();
+  window.scrollTo({top:0});
+}
+function closeSettings(){
+  gearBtn.setAttribute("aria-pressed","false");
+  setView(settingsPrevView);
+}
+gearBtn.addEventListener("click",()=>{ settingsViewEl.hidden ? openSettings() : closeSettings(); });
+
 function setView(v){
   view=v; store.set("gs-view",v);
+  settingsViewEl.hidden=true; gearBtn.setAttribute("aria-pressed","false");
   viewswEl.querySelectorAll(".viewbtn").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.view===v)));
   trainViewEl.hidden = v!=="train";
   statsViewEl.hidden = v!=="stats";
