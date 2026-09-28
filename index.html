@@ -80,6 +80,15 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .cell.hit{background:var(--done)}
 .cell.today{box-shadow:0 0 0 2px var(--accent)}
 .empty-hint{color:var(--muted);font-size:14px;padding:16px 0;text-align:center}
+.hbar-wrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:10px}
+.hbar-row{display:grid;grid-template-columns:98px 1fr 42px;align-items:center;gap:8px}
+.hbar-label{font-size:13px;font-weight:600;line-height:1.15}
+.hbar-sub{display:block;font-size:11px;color:var(--muted);font-weight:500}
+.hbar-track{background:var(--line);border-radius:6px;height:10px;overflow:hidden}
+.hbar-fill{background:var(--accent);height:100%;border-radius:6px}
+.hbar-fill.muscle{background:var(--done)}
+.hbar-val{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.records-note{color:var(--muted);font-size:14px;margin:10px 0 0}
 @media (max-width:380px){.tab{font-size:15px}.cue,.sets{margin-left:0}}
 @media (prefers-reduced-motion:no-preference){.set,.ex{transition:background .15s,border-color .15s}}
 </style>
@@ -110,52 +119,52 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 <script>
 const DAYS=[
  {k:"mon",d:"Mon",t:"Upper A",f:"Upper chest + back thickness",n:"Warm up 5 min, 2–3 ramp-up sets on the first press and row.",ex:[
-  ["Incline dumbbell press (30°)",3,"6–10","2–3 min","Deep stretch, elbows ~45°"],
-  ["Chest-supported row",3,"8–12","2–3 min","Chest on pad, squeeze 1 s"],
-  ["Flat machine press / DB bench",2,"8–12","2 min",""],
-  ["Neutral-grip lat pulldown",2,"10–12","2 min","Elbows to hips"],
-  ["Cable lateral raise",3,"12–20","60–90 s","Cable behind body"],
-  ["Overhead cable triceps extension",3,"10–15","90 s","Stretch behind head"],
-  ["Incline dumbbell curl",3,"10–15","90 s","Arms hang behind body"],
-  ["Wrist curl",3,"15–25","60 s","Roll to fingertips, curl up"]]},
+  ["Incline dumbbell press (30°)",3,"6–10","2–3 min","Deep stretch, elbows ~45°","Chest"],
+  ["Chest-supported row",3,"8–12","2–3 min","Chest on pad, squeeze 1 s","Back"],
+  ["Flat machine press / DB bench",2,"8–12","2 min","","Chest"],
+  ["Neutral-grip lat pulldown",2,"10–12","2 min","Elbows to hips","Back"],
+  ["Cable lateral raise",3,"12–20","60–90 s","Cable behind body","Shoulders"],
+  ["Overhead cable triceps extension",3,"10–15","90 s","Stretch behind head","Triceps"],
+  ["Incline dumbbell curl",3,"10–15","90 s","Arms hang behind body","Biceps"],
+  ["Wrist curl",3,"15–25","60 s","Roll to fingertips, curl up","Forearms"]]},
  {k:"tue",d:"Tue",t:"Lower A",f:"Quads",n:"Warm up 5 min on the bike, 3 ramp-up sets on the squat.",ex:[
-  ["Hack squat / high-bar squat",3,"6–10","3 min","Deep, neutral spine"],
-  ["Leg press (feet low)",3,"10–15","2 min","Full depth, no lockout"],
-  ["Bulgarian split squat",2,"8–12 / leg","2 min",""],
-  ["Leg extension",3,"10–15","90 s","1 s squeeze at top"],
-  ["Seated leg curl",3,"10–15","90 s","Lean forward"],
-  ["Standing calf raise",4,"8–15","60–90 s","2 s pause at bottom"],
-  ["Hanging knee raise",3,"10–15","60 s","Curl the pelvis up"]]},
+  ["Hack squat / high-bar squat",3,"6–10","3 min","Deep, neutral spine","Quads"],
+  ["Leg press (feet low)",3,"10–15","2 min","Full depth, no lockout","Quads"],
+  ["Bulgarian split squat",2,"8–12 / leg","2 min","","Quads"],
+  ["Leg extension",3,"10–15","90 s","1 s squeeze at top","Quads"],
+  ["Seated leg curl",3,"10–15","90 s","Lean forward","Hamstrings"],
+  ["Standing calf raise",4,"8–15","60–90 s","2 s pause at bottom","Calves"],
+  ["Hanging knee raise",3,"10–15","60 s","Curl the pelvis up","Core"]]},
  {k:"thu",d:"Thu",t:"Upper B",f:"Shoulders, rear delts, back",n:"Warm up 5 min, 2 ramp-up sets on the press and pull-ups.",ex:[
-  ["Low-incline press (15–30°)",3,"6–10","2–3 min","Touch high on chest"],
-  ["Pull-up / wide pulldown",3,"6–12","2–3 min","Dead hang at bottom"],
-  ["Seated cable row, wide, elbows out",3,"10–12","2 min","Pull to lower chest"],
-  ["Seated DB shoulder press",2,"8–12","2 min","Stop 1–2 short"],
-  ["Reverse pec deck / rear-delt fly",3,"12–20","60–90 s","Lead with elbows, no shrug"],
-  ["Lateral raise (DB or cable)",3,"12–20","60–90 s","Last set + partials"],
-  ["EZ-bar curl",2,"8–12","90 s","Strict"],
-  ["EZ-bar skull crusher (behind head)",2,"8–12","90 s",""],
-  ["Reverse wrist curl",2,"15–20","60 s",""]]},
+  ["Low-incline press (15–30°)",3,"6–10","2–3 min","Touch high on chest","Chest"],
+  ["Pull-up / wide pulldown",3,"6–12","2–3 min","Dead hang at bottom","Back"],
+  ["Seated cable row, wide, elbows out",3,"10–12","2 min","Pull to lower chest","Back"],
+  ["Seated DB shoulder press",2,"8–12","2 min","Stop 1–2 short","Shoulders"],
+  ["Reverse pec deck / rear-delt fly",3,"12–20","60–90 s","Lead with elbows, no shrug","Shoulders"],
+  ["Lateral raise (DB or cable)",3,"12–20","60–90 s","Last set + partials","Shoulders"],
+  ["EZ-bar curl",2,"8–12","90 s","Strict","Biceps"],
+  ["EZ-bar skull crusher (behind head)",2,"8–12","90 s","","Triceps"],
+  ["Reverse wrist curl",2,"15–20","60 s","","Forearms"]]},
  {k:"fri",d:"Fri",t:"Lower B",f:"Hamstrings + glutes",n:"Warm up 5 min, 3 ramp-up sets on the RDL.",ex:[
-  ["Romanian deadlift",3,"6–10","3 min","Hips back, bar close"],
-  ["Hip thrust (barbell / machine)",3,"8–12","2 min","Chin tucked, 1 s squeeze"],
-  ["Leg press (feet high & wide)",2,"12–15","2 min",""],
-  ["Seated leg curl",3,"10–15","90 s","3 s lowering"],
-  ["Seated calf raise",4,"12–20","60 s","Pause in stretch"],
-  ["Cable crunch",3,"10–15","60 s","Round spine, hips still"]]},
+  ["Romanian deadlift",3,"6–10","3 min","Hips back, bar close","Hamstrings"],
+  ["Hip thrust (barbell / machine)",3,"8–12","2 min","Chin tucked, 1 s squeeze","Glutes"],
+  ["Leg press (feet high & wide)",2,"12–15","2 min","","Hamstrings"],
+  ["Seated leg curl",3,"10–15","90 s","3 s lowering","Hamstrings"],
+  ["Seated calf raise",4,"12–20","60 s","Pause in stretch","Calves"],
+  ["Cable crunch",3,"10–15","60 s","Round spine, hips still","Core"]]},
  {k:"sat",d:"Sat",t:"Arms + weak points",f:"Arms, forearms, upper chest, rear delts",n:"A1/A2 and B1/B2 are supersets: do one, then the other, then rest.",ex:[
-  ["Incline machine / DB press",2,"8–12","2 min",""],
-  ["Low-to-high cable fly",2,"12–15","90 s","Finish at chin height"],
-  ["One-arm DB row / Meadows row",2,"10–12 / arm","90 s","Big stretch"],
-  ["Reverse pec deck / face pull",3,"15–20","60 s",""],
-  ["A1 · Preacher / Bayesian curl",3,"10–15","—","Full stretch"],
-  ["A2 · Rope pushdown",3,"10–15","90 s","Spread rope at bottom"],
-  ["B1 · Hammer curl",3,"10–15","—",""],
-  ["B2 · Overhead DB triceps ext.",2,"10–15","90 s","Deep stretch"],
-  ["Reverse-grip EZ curl",3,"12–15","60–90 s",""],
-  ["Wrist curl",2,"15–25","60 s",""],
-  ["Farmer's carry / dead hang",3,"30–40 m","90 s","Heavy"],
-  ["Ab wheel / plank 45–60 s",3,"8–12","60 s","Ribs down"]]}
+  ["Incline machine / DB press",2,"8–12","2 min","","Chest"],
+  ["Low-to-high cable fly",2,"12–15","90 s","Finish at chin height","Chest"],
+  ["One-arm DB row / Meadows row",2,"10–12 / arm","90 s","Big stretch","Back"],
+  ["Reverse pec deck / face pull",3,"15–20","60 s","","Shoulders"],
+  ["A1 · Preacher / Bayesian curl",3,"10–15","—","Full stretch","Biceps"],
+  ["A2 · Rope pushdown",3,"10–15","90 s","Spread rope at bottom","Triceps"],
+  ["B1 · Hammer curl",3,"10–15","—","","Biceps"],
+  ["B2 · Overhead DB triceps ext.",2,"10–15","90 s","Deep stretch","Triceps"],
+  ["Reverse-grip EZ curl",3,"12–15","60–90 s","","Biceps"],
+  ["Wrist curl",2,"15–25","60 s","","Forearms"],
+  ["Farmer's carry / dead hang",3,"30–40 m","90 s","Heavy","Forearms"],
+  ["Ab wheel / plank 45–60 s",3,"8–12","60 s","Ribs down","Core"]]}
 ];
 
 const DAY_OFFSET={mon:0,tue:1,thu:3,fri:4,sat:5}; // days since Monday, Wed/Sun are rest days
@@ -168,6 +177,7 @@ function todayISO(){return isoDate(new Date())}
 function fmtShortDate(iso){const [,m,d]=iso.split("-").map(Number);return `${m}/${d}`}
 function weekMonday(d){const dow=(d.getDay()+6)%7;const mon=new Date(d);mon.setDate(d.getDate()-dow);mon.setHours(0,0,0,0);return mon}
 function dayTotal(d){return d.ex.reduce((s,e)=>s+e[1],0)}
+function dayByKey(k){return DAYS.find(x=>x.k===k)}
 
 const todayIdx=(()=>{const w=new Date().getDay();return {1:0,2:1,4:2,5:3,6:4}[w]??null})();
 let cur=store.get("gs-tab"); if(cur==null||!DAYS[cur]) cur=todayIdx??0;
@@ -297,18 +307,135 @@ function renderConsistencyGrid(weeks){
   }
   return `<div class="weekgrid">${header}${rows}</div>`;
 }
+function sessionList(){
+  return Object.keys(history)
+    .filter(iso=>Object.values(history[iso].ticks).some(Boolean))
+    .sort()
+    .map(iso=>{
+      const e=history[iso], d=dayByKey(e.day);
+      const total=d?dayTotal(d):Object.keys(e.ticks).length;
+      const done=Object.values(e.ticks).filter(Boolean).length;
+      return {iso,day:e.day,done,total};
+    });
+}
+function perDayStats(){
+  const all=sessionList();
+  return DAYS.map(d=>{
+    const rows=all.filter(s=>s.day===d.k);
+    const sessions=rows.length;
+    const avgPct=sessions? rows.reduce((a,s)=>a+s.done/s.total,0)/sessions : 0;
+    return {k:d.k,d:d.d,t:d.t,sessions,avgPct};
+  });
+}
+function muscleGroupStats(){
+  const counts={};
+  Object.keys(history).forEach(iso=>{
+    const e=history[iso], d=dayByKey(e.day);
+    if(!d) return;
+    Object.entries(e.ticks).forEach(([id,on])=>{
+      if(!on) return;
+      const exIdx=Number(id.split("-")[0]);
+      const ex=d.ex[exIdx]; if(!ex) return;
+      const group=ex[5]||"Other";
+      counts[group]=(counts[group]||0)+1;
+    });
+  });
+  return Object.entries(counts).map(([group,n])=>({group,n})).sort((a,b)=>b.n-a.n);
+}
+function allTimeRecords(){
+  const all=sessionList();
+  if(!all.length) return {longestStreak:0,avgDone:0,avgPct:0,bestWeek:null};
+  const avgDone=all.reduce((a,s)=>a+s.done,0)/all.length;
+  const avgPct=all.reduce((a,s)=>a+s.done/s.total,0)/all.length*100;
+
+  const firstIso=all[0].iso;
+  const today=new Date(); today.setHours(0,0,0,0);
+
+  let longest=0, run=0;
+  for(let d=new Date(firstIso+"T00:00:00"); d<=today; d.setDate(d.getDate()+1)){
+    const key=WEEKDAY_KEY[d.getDay()];
+    if(!key) continue;
+    if(isTrained(isoDate(d),key)){ run++; longest=Math.max(longest,run); } else run=0;
+  }
+
+  let bestWeek={trained:0,monday:null};
+  for(let mon=weekMonday(new Date(firstIso+"T00:00:00")); mon<=today; mon.setDate(mon.getDate()+7)){
+    let trained=0;
+    Object.keys(DAY_OFFSET).forEach(key=>{
+      const d=new Date(mon); d.setDate(mon.getDate()+DAY_OFFSET[key]);
+      if(isTrained(isoDate(d),key)) trained++;
+    });
+    if(trained>bestWeek.trained) bestWeek={trained,monday:new Date(mon)};
+  }
+  return {longestStreak:longest,avgDone,avgPct,bestWeek:bestWeek.monday?bestWeek:null};
+}
+function monthlyStats(n){
+  const counts={};
+  sessionList().forEach(s=>{counts[s.iso.slice(0,7)]=(counts[s.iso.slice(0,7)]||0)+1});
+  const today=new Date(), months=[];
+  for(let i=n-1;i>=0;i--){
+    const d=new Date(today.getFullYear(),today.getMonth()-i,1);
+    const ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+    months.push({ym,label:d.toLocaleDateString(undefined,{month:"short"}),count:counts[ym]||0});
+  }
+  return months;
+}
+function renderPerDayBreakdown(){
+  const stats=perDayStats();
+  if(!stats.some(s=>s.sessions)) return `<p class="empty-hint">No sessions logged yet.</p>`;
+  const rows=stats.map(s=>{
+    const pct=Math.round(s.avgPct*100);
+    return `<div class="hbar-row"><div class="hbar-label">${s.d}<span class="hbar-sub">${s.t}</span></div><div class="hbar-track"><div class="hbar-fill" style="width:${pct}%"></div></div><div class="hbar-val">${s.sessions?pct+"%":"—"}</div></div>`;
+  }).join("");
+  return `<div class="hbar-wrap">${rows}</div>`;
+}
+function renderMuscleBreakdown(){
+  const stats=muscleGroupStats();
+  if(!stats.length) return `<p class="empty-hint">No sets logged yet.</p>`;
+  const max=stats[0].n;
+  const rows=stats.map(s=>{
+    const pct=Math.round(s.n/max*100);
+    return `<div class="hbar-row"><div class="hbar-label">${s.group}</div><div class="hbar-track"><div class="hbar-fill muscle" style="width:${pct}%"></div></div><div class="hbar-val">${s.n}</div></div>`;
+  }).join("");
+  return `<div class="hbar-wrap">${rows}</div>`;
+}
+function renderMonthlyChart(months){
+  const w=320,h=110,padB=20,padT=8,gap=8;
+  const n=months.length, barW=(w-(n-1)*gap)/n;
+  const max=Math.max(...months.map(m=>m.count),1);
+  const bars=months.map((m,i)=>{
+    const x=i*(barW+gap);
+    const bh=m.count?Math.max((h-padB-padT)*(m.count/max),2):0;
+    const y=h-padB-bh;
+    return `<g><rect class="bar" x="${x}" y="${y}" width="${barW}" height="${bh}" rx="3"><title>${m.label}: ${m.count} session${m.count===1?"":"s"}</title></rect><text x="${x+barW/2}" y="${h-6}" text-anchor="middle">${m.label}</text></g>`;
+  }).join("");
+  return `<svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Sessions per month">${bars}</svg>`;
+}
 function renderStats(){
-  const streak=computeStreak(), wk=thisWeekStats(), total=allTimeSessions(), sessions=recentSessions(10);
+  const streak=computeStreak(), wk=thisWeekStats(), total=allTimeSessions(), sessions=recentSessions(14);
+  const rec=allTimeRecords(), months=monthlyStats(6);
   statsViewEl.innerHTML=`
     <div class="stat-tiles">
       <div class="stat-tile"><div class="stat-num">${streak}</div><div class="stat-label">Day streak</div></div>
       <div class="stat-tile"><div class="stat-num">${wk.trained}/${wk.scheduled}</div><div class="stat-label">This week</div></div>
       <div class="stat-tile"><div class="stat-num">${total}</div><div class="stat-label">Total sessions</div></div>
     </div>
+    <div class="stat-tiles">
+      <div class="stat-tile"><div class="stat-num">${rec.longestStreak}</div><div class="stat-label">Best streak</div></div>
+      <div class="stat-tile"><div class="stat-num">${rec.avgDone.toFixed(1)}</div><div class="stat-label">Avg sets/session</div></div>
+      <div class="stat-tile"><div class="stat-num">${Math.round(rec.avgPct)}%</div><div class="stat-label">Avg completion</div></div>
+    </div>
+    ${rec.bestWeek?`<p class="records-note">Best week: <b>${rec.bestWeek.trained}/5</b> · week of ${fmtShortDate(isoDate(rec.bestWeek.monday))}</p>`:""}
     <h3 class="stats-h">Sets per session</h3>
     <div class="chart-wrap">${renderVolumeChart(sessions)}</div>
-    <h3 class="stats-h">Last 4 weeks</h3>
-    ${renderConsistencyGrid(4)}
+    <h3 class="stats-h">By workout day</h3>
+    ${renderPerDayBreakdown()}
+    <h3 class="stats-h">By muscle group</h3>
+    ${renderMuscleBreakdown()}
+    <h3 class="stats-h">Sessions per month</h3>
+    <div class="chart-wrap">${renderMonthlyChart(months)}</div>
+    <h3 class="stats-h">Last 8 weeks</h3>
+    ${renderConsistencyGrid(8)}
   `;
 }
 
