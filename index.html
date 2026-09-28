@@ -33,7 +33,11 @@ body{background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple
 .wrap{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:16px 48px}
 header h1{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:30px;letter-spacing:.01em;margin:4px 0 2px;text-transform:uppercase}
 header p{margin:0;color:var(--muted);font-size:14px}
-.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding-block:12px;margin-top:8px}
+.viewsw{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);display:flex;gap:8px;padding-top:12px;margin-top:8px}
+.viewbtn{flex:1;font:inherit;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:10px;padding:8px 0;cursor:pointer}
+.viewbtn[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.viewbtn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.tabs{position:sticky;top:calc(env(safe-area-inset-top,0px) + 46px);z-index:5;background:var(--bg);display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding-block:12px;margin-top:0}
 .tab{font:inherit;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:17px;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 0 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.1}
 .tab small{font-family:"Barlow",sans-serif;font-weight:500;font-size:11px;text-transform:none;color:var(--muted);margin-top:2px}
 .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -59,6 +63,23 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .rules{margin-top:24px;border-top:1px solid var(--line);padding-top:14px;display:grid;gap:6px;font-size:14px;color:var(--muted)}
 .rules b{color:var(--ink)}
 .reset{font:inherit;font-size:14px;background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;cursor:pointer;justify-self:start;margin-top:6px}
+#statsView{padding-top:16px}
+.stat-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 8px}
+.stat-tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center}
+.stat-num{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:28px;color:var(--accent);line-height:1}
+.stat-label{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.02em}
+.stats-h{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;margin:22px 0 8px;letter-spacing:.01em}
+.chart-wrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.chart{width:100%;height:140px;display:block}
+.chart .bar{fill:var(--accent)}
+.chart text{fill:var(--muted);font-size:9px;font-family:"Barlow",sans-serif}
+.weekgrid{display:grid;grid-template-columns:56px repeat(5,1fr);gap:6px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.weekgrid .wk-label{font-size:11px;color:var(--muted)}
+.weekgrid .dow{font-size:11px;color:var(--muted);text-align:center;text-transform:uppercase}
+.cell{width:100%;aspect-ratio:1;border-radius:6px;background:var(--line)}
+.cell.hit{background:var(--done)}
+.cell.today{box-shadow:0 0 0 2px var(--accent)}
+.empty-hint{color:var(--muted);font-size:14px;padding:16px 0;text-align:center}
 @media (max-width:380px){.tab{font-size:15px}.cue,.sets{margin-left:0}}
 @media (prefers-reduced-motion:no-preference){.set,.ex{transition:background .15s,border-color .15s}}
 </style>
@@ -68,15 +89,22 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
     <h1>Mathi's Gym Sheet</h1>
     <p>5-day Upper / Lower + Arms · Rest Wed &amp; Sun · Tap a set box when done</p>
   </header>
-  <nav class="tabs" role="tablist" id="tabs"></nav>
-  <main id="day"></main>
-  <section class="rules">
-    <div><b>Effort:</b> last set 0–2 reps from failure. Compounds 1–2 left, isolations 0–1.</div>
-    <div><b>Progress:</b> hit the top of the rep range on all sets → add weight next time.</div>
-    <div><b>Tempo:</b> 2–3 s lowering, short pause in the stretch.</div>
-    <div><b>Deload:</b> every 6–8 weeks, half the sets for one week.</div>
-    <button class="reset" id="reset" type="button">Clear ticks for this day</button>
-  </section>
+  <nav class="viewsw" role="tablist" id="viewsw">
+    <button class="viewbtn" type="button" role="tab" data-view="train" aria-selected="true">Train</button>
+    <button class="viewbtn" type="button" role="tab" data-view="stats" aria-selected="false">Stats</button>
+  </nav>
+  <div id="trainView">
+    <nav class="tabs" role="tablist" id="tabs"></nav>
+    <main id="day"></main>
+    <section class="rules">
+      <div><b>Effort:</b> last set 0–2 reps from failure. Compounds 1–2 left, isolations 0–1.</div>
+      <div><b>Progress:</b> hit the top of the rep range on all sets → add weight next time.</div>
+      <div><b>Tempo:</b> 2–3 s lowering, short pause in the stretch.</div>
+      <div><b>Deload:</b> every 6–8 weeks, half the sets for one week.</div>
+      <button class="reset" id="reset" type="button">Clear ticks for this day</button>
+    </section>
+  </div>
+  <div id="statsView" hidden></div>
 </div>
 
 <script>
@@ -129,16 +157,47 @@ const DAYS=[
   ["Farmer's carry / dead hang",3,"30–40 m","90 s","Heavy"],
   ["Ab wheel / plank 45–60 s",3,"8–12","60 s","Ribs down"]]}
 ];
+
+const DAY_OFFSET={mon:0,tue:1,thu:3,fri:4,sat:5}; // days since Monday, Wed/Sun are rest days
+const WEEKDAY_KEY={1:"mon",2:"tue",4:"thu",5:"fri",6:"sat"}; // JS getDay() -> our day key
+
 const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+function isoDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function todayISO(){return isoDate(new Date())}
+function fmtShortDate(iso){const [,m,d]=iso.split("-").map(Number);return `${m}/${d}`}
+function weekMonday(d){const dow=(d.getDay()+6)%7;const mon=new Date(d);mon.setDate(d.getDate()-dow);mon.setHours(0,0,0,0);return mon}
+function dayTotal(d){return d.ex.reduce((s,e)=>s+e[1],0)}
+
 const todayIdx=(()=>{const w=new Date().getDay();return {1:0,2:1,4:2,5:3,6:4}[w]??null})();
 let cur=store.get("gs-tab"); if(cur==null||!DAYS[cur]) cur=todayIdx??0;
-let ticks=store.get("gs-ticks")||{};
+let history=store.get("gs-history")||{};
+
+// one-time migration from the old weekday-keyed tick store (pre-history-tracking version)
+(function migrate(){
+  if(store.get("gs-history")) return;
+  const old=store.get("gs-ticks");
+  if(!old) return;
+  const wd=WEEKDAY_KEY[new Date().getDay()];
+  if(wd && old[wd] && Object.values(old[wd]).some(Boolean)){
+    history[todayISO()]={day:wd,ticks:old[wd]};
+    store.set("gs-history",history);
+  }
+})();
+
+let view=store.get("gs-view")||"train";
+
+const viewswEl=document.getElementById("viewsw"), trainViewEl=document.getElementById("trainView"), statsViewEl=document.getElementById("statsView");
 const tabsEl=document.getElementById("tabs"), dayEl=document.getElementById("day");
+
+function isTrained(iso,dayKey){const e=history[iso];return !!(e && e.day===dayKey && Object.values(e.ticks).some(Boolean))}
+function ticksForToday(dayKey){const e=history[todayISO()];return (e && e.day===dayKey)?e.ticks:{}}
+
 function renderTabs(){
   tabsEl.innerHTML=DAYS.map((d,i)=>`<button class="tab" role="tab" id="tab-${d.k}" aria-selected="${i===cur}" data-i="${i}">${d.d}<small>${d.t.split(" ")[0]==="Arms"?"Arms":d.t}</small></button>`).join("");
 }
 function renderDay(){
-  const d=DAYS[cur], t=ticks[d.k]||{};
+  const d=DAYS[cur], t=ticksForToday(d.k);
   let done=0,total=0;
   const items=d.ex.map((e,i)=>{
     const [name,sets,reps,rest,cue]=e; let boxes="",c=0;
@@ -148,10 +207,121 @@ function renderDay(){
   }).join("");
   dayEl.innerHTML=`<div class="dayhead"><h2>${d.d} · ${d.t}</h2><span class="progress">${done}/${total} sets</span></div><p class="note">${d.f}. ${d.n}</p><ol class="list">${items}</ol>`;
 }
+function toggleSet(exIdx,setIdx){
+  const dayKey=DAYS[cur].k, iso=todayISO(), id=exIdx+"-"+setIdx;
+  if(!history[iso] || history[iso].day!==dayKey) history[iso]={day:dayKey,ticks:{}};
+  history[iso].ticks[id]=!history[iso].ticks[id];
+  store.set("gs-history",history);
+}
+
 tabsEl.addEventListener("click",e=>{const b=e.target.closest(".tab"); if(!b)return; cur=+b.dataset.i; store.set("gs-tab",cur); renderTabs(); renderDay(); window.scrollTo({top:0});});
-dayEl.addEventListener("click",e=>{const b=e.target.closest(".set"); if(!b)return; const k=DAYS[cur].k, id=b.dataset.e+"-"+b.dataset.s; ticks[k]=ticks[k]||{}; ticks[k][id]=!ticks[k][id]; store.set("gs-ticks",ticks); renderDay();});
-document.getElementById("reset").addEventListener("click",()=>{ticks[DAYS[cur].k]={}; store.set("gs-ticks",ticks); renderDay();});
-renderTabs(); renderDay();
+dayEl.addEventListener("click",e=>{const b=e.target.closest(".set"); if(!b)return; toggleSet(+b.dataset.e,+b.dataset.s); renderDay();});
+document.getElementById("reset").addEventListener("click",()=>{
+  const iso=todayISO();
+  if(history[iso] && history[iso].day===DAYS[cur].k){ delete history[iso]; store.set("gs-history",history); }
+  renderDay();
+});
+
+// ---- Stats ----
+function computeStreak(){
+  let streak=0;
+  let d=new Date(); d.setHours(0,0,0,0);
+  const key0=WEEKDAY_KEY[d.getDay()];
+  if(key0 && isTrained(isoDate(d),key0)) streak++;
+  d.setDate(d.getDate()-1);
+  for(let i=0;i<370;i++){
+    const key=WEEKDAY_KEY[d.getDay()];
+    if(key){
+      if(isTrained(isoDate(d),key)) streak++;
+      else break;
+    }
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+function thisWeekStats(){
+  const mon=weekMonday(new Date());
+  let trained=0;
+  Object.keys(DAY_OFFSET).forEach(key=>{
+    const d=new Date(mon); d.setDate(mon.getDate()+DAY_OFFSET[key]);
+    if(isTrained(isoDate(d),key)) trained++;
+  });
+  return {trained,scheduled:Object.keys(DAY_OFFSET).length};
+}
+function allTimeSessions(){
+  return Object.keys(history).filter(iso=>Object.values(history[iso].ticks).some(Boolean)).length;
+}
+function recentSessions(n){
+  return Object.keys(history)
+    .filter(iso=>Object.values(history[iso].ticks).some(Boolean))
+    .sort()
+    .slice(-n)
+    .map(iso=>{
+      const e=history[iso];
+      const dayDef=DAYS.find(x=>x.k===e.day);
+      const total=dayDef?dayTotal(dayDef):Object.keys(e.ticks).length;
+      const done=Object.values(e.ticks).filter(Boolean).length;
+      return {iso,day:e.day,done,total};
+    });
+}
+function renderVolumeChart(sessions){
+  if(!sessions.length) return `<p class="empty-hint">No sessions logged yet — tap set boxes on Train to start tracking.</p>`;
+  const w=320,h=140,padB=20,padT=8,gap=6;
+  const n=sessions.length, barW=(w-(n-1)*gap)/n;
+  const max=Math.max(...sessions.map(s=>s.total),1);
+  const bars=sessions.map((s,i)=>{
+    const x=i*(barW+gap);
+    const bh=Math.max((h-padB-padT)*(s.done/max),2);
+    const y=h-padB-bh;
+    const label=(DAYS.find(x=>x.k===s.day)||{}).d||s.day;
+    return `<g><rect class="bar" x="${x}" y="${y}" width="${barW}" height="${bh}" rx="3"><title>${label} ${fmtShortDate(s.iso)}: ${s.done}/${s.total} sets</title></rect><text x="${x+barW/2}" y="${h-6}" text-anchor="middle">${fmtShortDate(s.iso)}</text></g>`;
+  }).join("");
+  return `<svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Sets completed per session">${bars}</svg>`;
+}
+function renderConsistencyGrid(weeks){
+  const cols=["mon","tue","thu","fri","sat"];
+  const today=new Date(); today.setHours(0,0,0,0);
+  const thisMon=weekMonday(today);
+  const header=`<div></div>`+cols.map(k=>`<div class="dow">${DAYS.find(d=>d.k===k).d}</div>`).join("");
+  let rows="";
+  for(let w=weeks-1; w>=0; w--){
+    const monW=new Date(thisMon); monW.setDate(thisMon.getDate()-w*7);
+    const cells=cols.map(key=>{
+      const d=new Date(monW); d.setDate(monW.getDate()+DAY_OFFSET[key]);
+      if(d>today) return `<div class="cell" style="visibility:hidden"></div>`;
+      const iso=isoDate(d), hit=isTrained(iso,key), isToday=iso===todayISO();
+      return `<div class="cell${hit?" hit":""}${isToday?" today":""}" title="${DAYS.find(x=>x.k===key).d} ${fmtShortDate(iso)}: ${hit?"trained":"missed"}"></div>`;
+    }).join("");
+    const label=w===0?"This wk":w===1?"Last wk":`${w+1}w ago`;
+    rows+=`<div class="wk-label">${label}</div>${cells}`;
+  }
+  return `<div class="weekgrid">${header}${rows}</div>`;
+}
+function renderStats(){
+  const streak=computeStreak(), wk=thisWeekStats(), total=allTimeSessions(), sessions=recentSessions(10);
+  statsViewEl.innerHTML=`
+    <div class="stat-tiles">
+      <div class="stat-tile"><div class="stat-num">${streak}</div><div class="stat-label">Day streak</div></div>
+      <div class="stat-tile"><div class="stat-num">${wk.trained}/${wk.scheduled}</div><div class="stat-label">This week</div></div>
+      <div class="stat-tile"><div class="stat-num">${total}</div><div class="stat-label">Total sessions</div></div>
+    </div>
+    <h3 class="stats-h">Sets per session</h3>
+    <div class="chart-wrap">${renderVolumeChart(sessions)}</div>
+    <h3 class="stats-h">Last 4 weeks</h3>
+    ${renderConsistencyGrid(4)}
+  `;
+}
+
+function setView(v){
+  view=v; store.set("gs-view",v);
+  viewswEl.querySelectorAll(".viewbtn").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.view===v)));
+  trainViewEl.hidden = v!=="train";
+  statsViewEl.hidden = v!=="stats";
+  if(v==="stats") renderStats();
+}
+viewswEl.addEventListener("click",e=>{const b=e.target.closest(".viewbtn"); if(!b)return; setView(b.dataset.view); window.scrollTo({top:0});});
+
+renderTabs(); renderDay(); setView(view);
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
 </script>
 
