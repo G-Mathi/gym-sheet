@@ -14,19 +14,19 @@
 <style>
 :root{
   --bg:#F2F3F0; --surface:#FFFFFF; --ink:#16181A; --muted:#5D645F; --line:#DADDD7;
-  --accent:#1E4FD8; --accent-ink:#FFFFFF; --done:#1C7A4A; --done-bg:#E3F2E9; --chip:#E8EBF7;
+  --accent:#1E4FD8; --accent-ink:#FFFFFF; --done:#1C7A4A; --done-bg:#E3F2E9; --chip:#E8EBF7; --bad:#C1391F;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
     --bg:#111315; --surface:#1A1D20; --ink:#ECEEEA; --muted:#9AA19C; --line:#2C3034;
-    --accent:#7C9BFF; --accent-ink:#0E1220; --done:#5FD198; --done-bg:#16301F; --chip:#20283F;
+    --accent:#7C9BFF; --accent-ink:#0E1220; --done:#5FD198; --done-bg:#16301F; --chip:#20283F; --bad:#FF7A68;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#111315; --surface:#1A1D20; --ink:#ECEEEA; --muted:#9AA19C; --line:#2C3034;
-  --accent:#7C9BFF; --accent-ink:#0E1220; --done:#5FD198; --done-bg:#16301F; --chip:#20283F;
+  --accent:#7C9BFF; --accent-ink:#0E1220; --done:#5FD198; --done-bg:#16301F; --chip:#20283F; --bad:#FF7A68;
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.4}
@@ -89,6 +89,34 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .hbar-fill.muscle{background:var(--done)}
 .hbar-val{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
 .records-note{color:var(--muted);font-size:14px;margin:10px 0 0}
+#historyView{padding-top:16px}
+.hist-datebar{margin:4px 0 16px}
+.hist-datebar input[type="date"]{font:inherit;font-size:16px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.hist-detail-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:20px}
+.hist-ex{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.hist-ex:first-of-type{border-top:none}
+.hist-ex-name{font-size:14px;font-weight:600}
+.hist-ex-sets{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.hist-set{width:24px;height:24px;border-radius:6px;border:1.5px solid var(--line);color:var(--muted);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.hist-set.on{background:var(--done);border-color:var(--done);color:var(--surface)}
+.hist-list{display:grid;gap:6px;margin-bottom:8px;max-height:320px;overflow-y:auto}
+.hist-row{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.hist-row.active{border-color:var(--accent)}
+.hist-row b{font-size:14px}
+.hist-row-val{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px;white-space:nowrap}
+.seg{display:flex;gap:6px;margin:4px 0 12px}
+.segbtn{flex:1;font:inherit;font-size:13px;font-weight:700;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:8px;padding:6px 0;cursor:pointer}
+.segbtn[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.compare-selects{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.compare-selects select{flex:1;font:inherit;font-size:13px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-width:0}
+.compare-selects .vs{font-size:12px;color:var(--muted);font-weight:700}
+.cmp-table{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:10px}
+.cmp-row{display:grid;grid-template-columns:86px 1fr 1fr 46px;align-items:center;gap:6px;font-size:13px}
+.cmp-row.cmp-head{font-weight:700;color:var(--muted);font-size:11px;text-transform:uppercase}
+.cmp-delta{font-size:12px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.cmp-delta.up{color:var(--done)}
+.cmp-delta.down{color:var(--bad)}
+.cmp-delta.flat{color:var(--muted)}
 @media (max-width:380px){.tab{font-size:15px}.cue,.sets{margin-left:0}}
 @media (prefers-reduced-motion:no-preference){.set,.ex{transition:background .15s,border-color .15s}}
 </style>
@@ -101,6 +129,7 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
   <nav class="viewsw" role="tablist" id="viewsw">
     <button class="viewbtn" type="button" role="tab" data-view="train" aria-selected="true">Train</button>
     <button class="viewbtn" type="button" role="tab" data-view="stats" aria-selected="false">Stats</button>
+    <button class="viewbtn" type="button" role="tab" data-view="history" aria-selected="false">History</button>
   </nav>
   <div id="trainView">
     <nav class="tabs" role="tablist" id="tabs"></nav>
@@ -114,6 +143,7 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
     </section>
   </div>
   <div id="statsView" hidden></div>
+  <div id="historyView" hidden></div>
 </div>
 
 <script>
@@ -175,6 +205,7 @@ const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){retu
 function isoDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function todayISO(){return isoDate(new Date())}
 function fmtShortDate(iso){const [,m,d]=iso.split("-").map(Number);return `${m}/${d}`}
+function fmtLongDate(iso){return new Date(iso+"T00:00:00").toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric",year:"numeric"})}
 function weekMonday(d){const dow=(d.getDay()+6)%7;const mon=new Date(d);mon.setDate(d.getDate()-dow);mon.setHours(0,0,0,0);return mon}
 function dayTotal(d){return d.ex.reduce((s,e)=>s+e[1],0)}
 function dayByKey(k){return DAYS.find(x=>x.k===k)}
@@ -197,8 +228,9 @@ let history=store.get("gs-history")||{};
 
 let view=store.get("gs-view")||"train";
 
-const viewswEl=document.getElementById("viewsw"), trainViewEl=document.getElementById("trainView"), statsViewEl=document.getElementById("statsView");
+const viewswEl=document.getElementById("viewsw"), trainViewEl=document.getElementById("trainView"), statsViewEl=document.getElementById("statsView"), historyViewEl=document.getElementById("historyView");
 const tabsEl=document.getElementById("tabs"), dayEl=document.getElementById("day");
+let historySelectedDate=null, cmpType="week";
 
 function isTrained(iso,dayKey){const e=history[iso];return !!(e && e.day===dayKey && Object.values(e.ticks).some(Boolean))}
 function ticksForToday(dayKey){const e=history[todayISO()];return (e && e.day===dayKey)?e.ticks:{}}
@@ -439,12 +471,145 @@ function renderStats(){
   `;
 }
 
+// ---- History (browse by date + compare periods) ----
+function histRow(iso){
+  const e=history[iso], d=dayByKey(e.day);
+  const total=d?dayTotal(d):Object.keys(e.ticks).length;
+  const done=Object.values(e.ticks).filter(Boolean).length;
+  const label=d?`${d.d} · ${d.t}`:e.day;
+  return `<div class="hist-row${iso===historySelectedDate?" active":""}" data-iso="${iso}"><div><b>${label}</b><span class="hbar-sub">${fmtLongDate(iso)}</span></div><div class="hist-row-val">${done}/${total} sets</div></div>`;
+}
+function renderHistDetail(iso){
+  const el=document.getElementById("histDetail");
+  if(!el) return;
+  const e=history[iso];
+  if(!e || !Object.values(e.ticks).some(Boolean)){
+    const wd=WEEKDAY_KEY[new Date(iso+"T00:00:00").getDay()];
+    el.innerHTML=`<p class="empty-hint">${wd? "No session logged for "+fmtLongDate(iso)+"." : fmtLongDate(iso)+" is a scheduled rest day."}</p>`;
+    return;
+  }
+  const d=dayByKey(e.day);
+  const done=Object.values(e.ticks).filter(Boolean).length, total=d?dayTotal(d):Object.keys(e.ticks).length;
+  const rows=d? d.ex.map((ex,i)=>{
+    const [name,sets]=ex;
+    let boxes="";
+    for(let s=0;s<sets;s++){const on=!!e.ticks[i+"-"+s]; boxes+=`<span class="hist-set${on?" on":""}">${on?"✓":s+1}</span>`}
+    return `<div class="hist-ex"><div class="hist-ex-name">${name}</div><div class="hist-ex-sets">${boxes}</div></div>`;
+  }).join("") : "";
+  el.innerHTML=`<div class="hist-detail-card"><div class="dayhead"><h2>${d?`${d.d} · ${d.t}`:e.day}</h2><span class="progress">${done}/${total} sets</span></div><p class="note">${fmtLongDate(iso)}</p>${rows}</div>`;
+}
+function scheduledDaysInRange(start,end){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const realEnd=end>today?today:end;
+  let count=0;
+  for(let d=new Date(start); d<=realEnd; d.setDate(d.getDate()+1)) if(WEEKDAY_KEY[d.getDay()]) count++;
+  return count;
+}
+function statsForRange(start,end){
+  let sessions=0, doneSum=0, pctSum=0;
+  sessionList().forEach(s=>{
+    const d=new Date(s.iso+"T00:00:00");
+    if(d>=start && d<=end){ sessions++; doneSum+=s.done; pctSum+=s.done/s.total; }
+  });
+  return {sessions, scheduled:scheduledDaysInRange(start,end), doneSum, avgPct: sessions? pctSum/sessions*100 : 0};
+}
+function availableWeeks(){
+  const set=new Set();
+  sessionList().forEach(s=>set.add(isoDate(weekMonday(new Date(s.iso+"T00:00:00")))));
+  return [...set].sort().reverse();
+}
+function availableMonths(){
+  const set=new Set();
+  sessionList().forEach(s=>set.add(s.iso.slice(0,7)));
+  return [...set].sort().reverse();
+}
+function rangeFor(type,key){
+  if(type==="week"){
+    const mon=new Date(key+"T00:00:00");
+    const sun=new Date(mon); sun.setDate(mon.getDate()+6);
+    return {start:mon, end:sun, label:`Week of ${fmtShortDate(key)}`};
+  }
+  const [y,m]=key.split("-").map(Number);
+  return {start:new Date(y,m-1,1), end:new Date(y,m,0), label:new Date(y,m-1,1).toLocaleDateString(undefined,{month:"long",year:"numeric"})};
+}
+function cmpDelta(x,y,suffix){
+  const d=x-y;
+  if(Math.abs(d)<0.05) return `<span class="cmp-delta flat">–</span>`;
+  const cls=d>0?"up":"down", sign=d>0?"+":"";
+  const val=suffix==="%"?Math.round(d):Math.round(d*10)/10;
+  return `<span class="cmp-delta ${cls}">${sign}${val}${suffix||""}</span>`;
+}
+function renderCompare(){
+  const selA=document.getElementById("cmpA"), selB=document.getElementById("cmpB"), out=document.getElementById("cmpResult");
+  if(!selA || !selA.value){ out.innerHTML=`<p class="empty-hint">Not enough history yet to compare.</p>`; return; }
+  const rA=rangeFor(cmpType,selA.value), rB=rangeFor(cmpType,selB.value);
+  const a=statsForRange(rA.start,rA.end), b=statsForRange(rB.start,rB.end);
+  out.innerHTML=`<div class="cmp-table">
+    <div class="cmp-row cmp-head"><div></div><div>${rA.label}</div><div>${rB.label}</div><div></div></div>
+    <div class="cmp-row"><div>Sessions</div><div>${a.sessions}/${a.scheduled}</div><div>${b.sessions}/${b.scheduled}</div>${cmpDelta(a.sessions,b.sessions,"")}</div>
+    <div class="cmp-row"><div>Sets done</div><div>${a.doneSum}</div><div>${b.doneSum}</div>${cmpDelta(a.doneSum,b.doneSum,"")}</div>
+    <div class="cmp-row"><div>Avg completion</div><div>${Math.round(a.avgPct)}%</div><div>${Math.round(b.avgPct)}%</div>${cmpDelta(a.avgPct,b.avgPct,"%")}</div>
+  </div>`;
+}
+function populateCompareSelects(){
+  const opts=cmpType==="week"?availableWeeks():availableMonths();
+  const selA=document.getElementById("cmpA"), selB=document.getElementById("cmpB");
+  if(!opts.length){ selA.innerHTML=""; selB.innerHTML=""; renderCompare(); return; }
+  const optionsHtml=opts.map(v=>`<option value="${v}">${rangeFor(cmpType,v).label}</option>`).join("");
+  selA.innerHTML=optionsHtml; selB.innerHTML=optionsHtml;
+  selA.value=opts[0]; selB.value=opts[1]||opts[0];
+  renderCompare();
+}
+function renderHistory(){
+  const dates=sessionList().map(s=>s.iso).sort().reverse();
+  const sel=historySelectedDate && history[historySelectedDate] ? historySelectedDate : (dates[0]||todayISO());
+  historySelectedDate=sel;
+  historyViewEl.innerHTML=`
+    <div class="hist-datebar"><input type="date" id="histDate" value="${sel}" max="${todayISO()}"></div>
+    <div id="histDetail"></div>
+    <h3 class="stats-h">All sessions</h3>
+    <div class="hist-list">${dates.length?dates.map(histRow).join(""):'<p class="empty-hint">No sessions logged yet.</p>'}</div>
+    <h3 class="stats-h">Compare two periods</h3>
+    <div class="seg" id="cmpType">
+      <button class="segbtn" type="button" data-type="week" aria-selected="${cmpType==="week"}">Week</button>
+      <button class="segbtn" type="button" data-type="month" aria-selected="${cmpType==="month"}">Month</button>
+    </div>
+    <div class="compare-selects"><select id="cmpA"></select><span class="vs">vs</span><select id="cmpB"></select></div>
+    <div id="cmpResult"></div>
+  `;
+  renderHistDetail(sel);
+  document.getElementById("histDate").addEventListener("change",e=>{
+    if(!e.target.value) return;
+    historySelectedDate=e.target.value;
+    renderHistDetail(historySelectedDate);
+    historyViewEl.querySelectorAll(".hist-row").forEach(r=>r.classList.toggle("active", r.dataset.iso===historySelectedDate));
+  });
+  historyViewEl.querySelectorAll(".hist-row").forEach(r=>r.addEventListener("click",()=>{
+    historySelectedDate=r.dataset.iso;
+    document.getElementById("histDate").value=historySelectedDate;
+    renderHistDetail(historySelectedDate);
+    historyViewEl.querySelectorAll(".hist-row").forEach(x=>x.classList.toggle("active", x.dataset.iso===historySelectedDate));
+    window.scrollTo({top:0});
+  }));
+  document.getElementById("cmpType").addEventListener("click",e=>{
+    const b=e.target.closest(".segbtn"); if(!b) return;
+    cmpType=b.dataset.type;
+    document.getElementById("cmpType").querySelectorAll(".segbtn").forEach(x=>x.setAttribute("aria-selected", String(x.dataset.type===cmpType)));
+    populateCompareSelects();
+  });
+  document.getElementById("cmpA").addEventListener("change",renderCompare);
+  document.getElementById("cmpB").addEventListener("change",renderCompare);
+  populateCompareSelects();
+}
+
 function setView(v){
   view=v; store.set("gs-view",v);
   viewswEl.querySelectorAll(".viewbtn").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.view===v)));
   trainViewEl.hidden = v!=="train";
   statsViewEl.hidden = v!=="stats";
+  historyViewEl.hidden = v!=="history";
   if(v==="stats") renderStats();
+  if(v==="history") renderHistory();
 }
 viewswEl.addEventListener("click",e=>{const b=e.target.closest(".viewbtn"); if(!b)return; setView(b.dataset.view); window.scrollTo({top:0});});
 
