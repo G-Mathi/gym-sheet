@@ -1,0 +1,158 @@
+<!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mathi's Gym Sheet</title>
+<meta name="description" content="5-day Upper/Lower + Arms gym tracker">
+<meta name="theme-color" content="#1E4FD8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gym Sheet">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#F2F3F0; --surface:#FFFFFF; --ink:#16181A; --muted:#5D645F; --line:#DADDD7;
+  --accent:#1E4FD8; --accent-ink:#FFFFFF; --done:#1C7A4A; --done-bg:#E3F2E9; --chip:#E8EBF7;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111315; --surface:#1A1D20; --ink:#ECEEEA; --muted:#9AA19C; --line:#2C3034;
+    --accent:#7C9BFF; --accent-ink:#0E1220; --done:#5FD198; --done-bg:#16301F; --chip:#20283F;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111315; --surface:#1A1D20; --ink:#ECEEEA; --muted:#9AA19C; --line:#2C3034;
+  --accent:#7C9BFF; --accent-ink:#0E1220; --done:#5FD198; --done-bg:#16301F; --chip:#20283F;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.4}
+.wrap{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:16px 48px}
+header h1{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:30px;letter-spacing:.01em;margin:4px 0 2px;text-transform:uppercase}
+header p{margin:0;color:var(--muted);font-size:14px}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding-block:12px;margin-top:8px}
+.tab{font:inherit;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:17px;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 0 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.tab small{font-family:"Barlow",sans-serif;font-weight:500;font-size:11px;text-transform:none;color:var(--muted);margin-top:2px}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tab[aria-selected="true"] small{color:var(--accent-ink);opacity:.85}
+.tab:focus-visible,.set:focus-visible,.reset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dayhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:8px 0 4px}
+.dayhead h2{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:24px;margin:0;text-transform:uppercase;text-wrap:balance}
+.progress{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px;white-space:nowrap}
+.note{color:var(--muted);font-size:14px;margin:0 0 12px}
+ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:8px}
+.ex.complete{border-color:var(--done);background:var(--done-bg)}
+.top{display:flex;gap:10px;align-items:flex-start}
+.num{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:18px;color:var(--accent);min-width:28px;font-variant-numeric:tabular-nums}
+.name{font-weight:600;font-size:17px;line-height:1.25}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chip{background:var(--chip);border-radius:6px;padding:2px 8px;font-size:14px;font-variant-numeric:tabular-nums;font-weight:500}
+.chip.rest{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.cue{color:var(--muted);font-size:14px;margin:0 0 0 38px}
+.sets{display:flex;gap:8px;margin-left:38px;flex-wrap:wrap}
+.set{font:inherit;font-weight:600;font-size:14px;width:44px;height:36px;border-radius:8px;border:1.5px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font-variant-numeric:tabular-nums}
+.set[aria-pressed="true"]{background:var(--done);border-color:var(--done);color:var(--surface)}
+.rules{margin-top:24px;border-top:1px solid var(--line);padding-top:14px;display:grid;gap:6px;font-size:14px;color:var(--muted)}
+.rules b{color:var(--ink)}
+.reset{font:inherit;font-size:14px;background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;cursor:pointer;justify-self:start;margin-top:6px}
+@media (max-width:380px){.tab{font-size:15px}.cue,.sets{margin-left:0}}
+@media (prefers-reduced-motion:no-preference){.set,.ex{transition:background .15s,border-color .15s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Mathi's Gym Sheet</h1>
+    <p>5-day Upper / Lower + Arms · Rest Wed &amp; Sun · Tap a set box when done</p>
+  </header>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <main id="day"></main>
+  <section class="rules">
+    <div><b>Effort:</b> last set 0–2 reps from failure. Compounds 1–2 left, isolations 0–1.</div>
+    <div><b>Progress:</b> hit the top of the rep range on all sets → add weight next time.</div>
+    <div><b>Tempo:</b> 2–3 s lowering, short pause in the stretch.</div>
+    <div><b>Deload:</b> every 6–8 weeks, half the sets for one week.</div>
+    <button class="reset" id="reset" type="button">Clear ticks for this day</button>
+  </section>
+</div>
+
+<script>
+const DAYS=[
+ {k:"mon",d:"Mon",t:"Upper A",f:"Upper chest + back thickness",n:"Warm up 5 min, 2–3 ramp-up sets on the first press and row.",ex:[
+  ["Incline dumbbell press (30°)",3,"6–10","2–3 min","Deep stretch, elbows ~45°"],
+  ["Chest-supported row",3,"8–12","2–3 min","Chest on pad, squeeze 1 s"],
+  ["Flat machine press / DB bench",2,"8–12","2 min",""],
+  ["Neutral-grip lat pulldown",2,"10–12","2 min","Elbows to hips"],
+  ["Cable lateral raise",3,"12–20","60–90 s","Cable behind body"],
+  ["Overhead cable triceps extension",3,"10–15","90 s","Stretch behind head"],
+  ["Incline dumbbell curl",3,"10–15","90 s","Arms hang behind body"],
+  ["Wrist curl",3,"15–25","60 s","Roll to fingertips, curl up"]]},
+ {k:"tue",d:"Tue",t:"Lower A",f:"Quads",n:"Warm up 5 min on the bike, 3 ramp-up sets on the squat.",ex:[
+  ["Hack squat / high-bar squat",3,"6–10","3 min","Deep, neutral spine"],
+  ["Leg press (feet low)",3,"10–15","2 min","Full depth, no lockout"],
+  ["Bulgarian split squat",2,"8–12 / leg","2 min",""],
+  ["Leg extension",3,"10–15","90 s","1 s squeeze at top"],
+  ["Seated leg curl",3,"10–15","90 s","Lean forward"],
+  ["Standing calf raise",4,"8–15","60–90 s","2 s pause at bottom"],
+  ["Hanging knee raise",3,"10–15","60 s","Curl the pelvis up"]]},
+ {k:"thu",d:"Thu",t:"Upper B",f:"Shoulders, rear delts, back",n:"Warm up 5 min, 2 ramp-up sets on the press and pull-ups.",ex:[
+  ["Low-incline press (15–30°)",3,"6–10","2–3 min","Touch high on chest"],
+  ["Pull-up / wide pulldown",3,"6–12","2–3 min","Dead hang at bottom"],
+  ["Seated cable row, wide, elbows out",3,"10–12","2 min","Pull to lower chest"],
+  ["Seated DB shoulder press",2,"8–12","2 min","Stop 1–2 short"],
+  ["Reverse pec deck / rear-delt fly",3,"12–20","60–90 s","Lead with elbows, no shrug"],
+  ["Lateral raise (DB or cable)",3,"12–20","60–90 s","Last set + partials"],
+  ["EZ-bar curl",2,"8–12","90 s","Strict"],
+  ["EZ-bar skull crusher (behind head)",2,"8–12","90 s",""],
+  ["Reverse wrist curl",2,"15–20","60 s",""]]},
+ {k:"fri",d:"Fri",t:"Lower B",f:"Hamstrings + glutes",n:"Warm up 5 min, 3 ramp-up sets on the RDL.",ex:[
+  ["Romanian deadlift",3,"6–10","3 min","Hips back, bar close"],
+  ["Hip thrust (barbell / machine)",3,"8–12","2 min","Chin tucked, 1 s squeeze"],
+  ["Leg press (feet high & wide)",2,"12–15","2 min",""],
+  ["Seated leg curl",3,"10–15","90 s","3 s lowering"],
+  ["Seated calf raise",4,"12–20","60 s","Pause in stretch"],
+  ["Cable crunch",3,"10–15","60 s","Round spine, hips still"]]},
+ {k:"sat",d:"Sat",t:"Arms + weak points",f:"Arms, forearms, upper chest, rear delts",n:"A1/A2 and B1/B2 are supersets: do one, then the other, then rest.",ex:[
+  ["Incline machine / DB press",2,"8–12","2 min",""],
+  ["Low-to-high cable fly",2,"12–15","90 s","Finish at chin height"],
+  ["One-arm DB row / Meadows row",2,"10–12 / arm","90 s","Big stretch"],
+  ["Reverse pec deck / face pull",3,"15–20","60 s",""],
+  ["A1 · Preacher / Bayesian curl",3,"10–15","—","Full stretch"],
+  ["A2 · Rope pushdown",3,"10–15","90 s","Spread rope at bottom"],
+  ["B1 · Hammer curl",3,"10–15","—",""],
+  ["B2 · Overhead DB triceps ext.",2,"10–15","90 s","Deep stretch"],
+  ["Reverse-grip EZ curl",3,"12–15","60–90 s",""],
+  ["Wrist curl",2,"15–25","60 s",""],
+  ["Farmer's carry / dead hang",3,"30–40 m","90 s","Heavy"],
+  ["Ab wheel / plank 45–60 s",3,"8–12","60 s","Ribs down"]]}
+];
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const todayIdx=(()=>{const w=new Date().getDay();return {1:0,2:1,4:2,5:3,6:4}[w]??null})();
+let cur=store.get("gs-tab"); if(cur==null||!DAYS[cur]) cur=todayIdx??0;
+let ticks=store.get("gs-ticks")||{};
+const tabsEl=document.getElementById("tabs"), dayEl=document.getElementById("day");
+function renderTabs(){
+  tabsEl.innerHTML=DAYS.map((d,i)=>`<button class="tab" role="tab" id="tab-${d.k}" aria-selected="${i===cur}" data-i="${i}">${d.d}<small>${d.t.split(" ")[0]==="Arms"?"Arms":d.t}</small></button>`).join("");
+}
+function renderDay(){
+  const d=DAYS[cur], t=ticks[d.k]||{};
+  let done=0,total=0;
+  const items=d.ex.map((e,i)=>{
+    const [name,sets,reps,rest,cue]=e; let boxes="",c=0;
+    for(let s=0;s<sets;s++){const on=!!t[i+"-"+s]; if(on)c++; boxes+=`<button class="set" type="button" aria-pressed="${on}" data-e="${i}" data-s="${s}" aria-label="${name} set ${s+1}">${on?"✓":s+1}</button>`}
+    done+=c; total+=sets;
+    return `<li class="ex${c===sets?" complete":""}"><div class="top"><span class="num">${i+1}</span><div><div class="name">${name}</div><div class="meta"><span class="chip">${sets} × ${reps}</span><span class="chip rest">Rest ${rest}</span></div></div></div>${cue?`<p class="cue">${cue}</p>`:""}<div class="sets">${boxes}</div></li>`;
+  }).join("");
+  dayEl.innerHTML=`<div class="dayhead"><h2>${d.d} · ${d.t}</h2><span class="progress">${done}/${total} sets</span></div><p class="note">${d.f}. ${d.n}</p><ol class="list">${items}</ol>`;
+}
+tabsEl.addEventListener("click",e=>{const b=e.target.closest(".tab"); if(!b)return; cur=+b.dataset.i; store.set("gs-tab",cur); renderTabs(); renderDay(); window.scrollTo({top:0});});
+dayEl.addEventListener("click",e=>{const b=e.target.closest(".set"); if(!b)return; const k=DAYS[cur].k, id=b.dataset.e+"-"+b.dataset.s; ticks[k]=ticks[k]||{}; ticks[k][id]=!ticks[k][id]; store.set("gs-ticks",ticks); renderDay();});
+document.getElementById("reset").addEventListener("click",()=>{ticks[DAYS[cur].k]={}; store.set("gs-ticks",ticks); renderDay();});
+renderTabs(); renderDay();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
+</script>
+
+</body></html>
