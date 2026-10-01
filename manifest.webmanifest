@@ -1,7 +1,7 @@
 {
   "name": "Mathi's Gym Sheet",
   "short_name": "Gym Sheet",
-  "description": "5-day Upper/Lower + Arms gym tracker",
+  "description": "5-day Push/Pull/Legs/Full body/Arms gym tracker",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

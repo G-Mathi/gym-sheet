@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Mathi's Gym Sheet</title>
-<meta name="description" content="5-day Upper/Lower + Arms gym tracker">
+<meta name="description" content="5-day Push/Pull/Legs/Full body/Arms gym tracker">
 <meta name="theme-color" content="#1E4FD8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -69,6 +69,20 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .sets{display:flex;gap:8px;margin-left:38px;flex-wrap:wrap}
 .set{font:inherit;font-weight:600;font-size:14px;width:44px;height:36px;border-radius:8px;border:1.5px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font-variant-numeric:tabular-nums}
 .set[aria-pressed="true"]{background:var(--done);border-color:var(--done);color:var(--surface)}
+.phase{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-block:4px 14px}
+.phase.complete{border-color:var(--done);background:var(--done-bg)}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.phase h3,.mid{font-family:var(--font-display);font-weight:700;font-size:19px;text-transform:uppercase;letter-spacing:.02em;margin:0}
+.mid{margin:4px 0 10px;color:var(--accent)}
+.cue0{color:var(--muted);font-size:13px;margin:4px 0 6px}
+.cl{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:2px}
+.chk{font:inherit;width:100%;display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:center;text-align:left;background:none;border:0;border-radius:8px;padding:7px 4px;color:var(--ink);cursor:pointer}
+.chk:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.box{width:22px;height:22px;border:1.5px solid var(--line);border-radius:6px;display:grid;place-items:center;font-size:13px;font-weight:700}
+.chk[aria-pressed="true"] .box{background:var(--done);border-color:var(--done);color:var(--surface)}
+.chk[aria-pressed="true"] .cn{color:var(--muted);text-decoration:line-through}
+.cn{font-size:15px}
+.cd{font-size:13px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;max-width:48vw}
 .rules{margin-top:24px;border-top:1px solid var(--line);padding-top:14px;display:grid;gap:6px;font-size:14px;color:var(--muted)}
 .rules b{color:var(--ink)}
 .reset{font:inherit;font-size:14px;background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;cursor:pointer;justify-self:start;margin-top:6px}
@@ -142,7 +156,7 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
   <header class="hdrflex">
     <div>
       <h1>Mathi's Gym Sheet</h1>
-      <p>5-day Upper / Lower + Arms · Rest Wed &amp; Sun · Tap a set box when done</p>
+      <p>5-day Push · Pull · Legs · Full body · Arms · Rest Thu &amp; Sun · Tap a set box when done</p>
     </div>
     <button class="gearbtn" id="gearBtn" type="button" aria-label="Settings">⚙</button>
   </header>
@@ -155,7 +169,7 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
     <nav class="tabs" role="tablist" id="tabs"></nav>
     <main id="day"></main>
     <section class="rules">
-      <div><b>Effort:</b> last set 0–2 reps from failure. Compounds 1–2 left, isolations 0–1.</div>
+      <div><b>Effort:</b> compounds stop 2–3 reps before failure; isolations 0–1 reps left.</div>
       <div><b>Progress:</b> hit the top of the rep range on all sets → add weight next time.</div>
       <div><b>Tempo:</b> 2–3 s lowering, short pause in the stretch.</div>
       <div><b>Deload:</b> every 6–8 weeks, half the sets for one week.</div>
@@ -169,57 +183,65 @@ ol.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 
 <script>
 const DAYS=[
- {k:"mon",d:"Mon",t:"Upper A",f:"Upper chest + back thickness",n:"Warm up 5 min, 2–3 ramp-up sets on the first press and row.",ex:[
+ {k:"push",d:"Mon",t:"Push",f:"Chest, shoulders, triceps · ~55 min",n:"Exercises 4 and 7: do the chest press in one slot and the pec deck in the other, whichever machine is free.",ex:[
   ["Incline dumbbell press (30°)",3,"6–10","2–3 min","Deep stretch, elbows ~45°","Chest"],
-  ["Chest-supported row",3,"8–12","2–3 min","Chest on pad, squeeze 1 s","Back"],
-  ["Flat machine press / DB bench",2,"8–12","2 min","","Chest"],
-  ["Neutral-grip lat pulldown",2,"10–12","2 min","Elbows to hips","Back"],
-  ["Cable lateral raise",3,"12–20","60–90 s","Cable behind body","Shoulders"],
-  ["Overhead cable triceps extension",3,"10–15","90 s","Stretch behind head","Triceps"],
-  ["Incline dumbbell curl",3,"10–15","90 s","Arms hang behind body","Biceps"],
-  ["Wrist curl",3,"15–25","60 s","Roll to fingertips, curl up","Forearms"]]},
- {k:"tue",d:"Tue",t:"Lower A",f:"Quads",n:"Warm up 5 min on the bike, 3 ramp-up sets on the squat.",ex:[
-  ["Hack squat / high-bar squat",3,"6–10","3 min","Deep, neutral spine","Quads"],
-  ["Leg press (feet low)",3,"10–15","2 min","Full depth, no lockout","Quads"],
-  ["Bulgarian split squat",2,"8–12 / leg","2 min","","Quads"],
-  ["Leg extension",3,"10–15","90 s","1 s squeeze at top","Quads"],
-  ["Seated leg curl",3,"10–15","90 s","Lean forward","Hamstrings"],
-  ["Standing calf raise",4,"8–15","60–90 s","2 s pause at bottom","Calves"],
-  ["Hanging knee raise",3,"10–15","60 s","Curl the pelvis up","Core"]]},
- {k:"thu",d:"Thu",t:"Upper B",f:"Shoulders, rear delts, back",n:"Warm up 5 min, 2 ramp-up sets on the press and pull-ups.",ex:[
-  ["Low-incline press (15–30°)",3,"6–10","2–3 min","Touch high on chest","Chest"],
-  ["Pull-up / wide pulldown",3,"6–12","2–3 min","Dead hang at bottom","Back"],
-  ["Seated cable row, wide, elbows out",3,"10–12","2 min","Pull to lower chest","Back"],
-  ["Seated DB shoulder press",2,"8–12","2 min","Stop 1–2 short","Shoulders"],
+  ["Lateral raise (DB or cable)",3,"12–20","60–90 s","Lead with elbows, no swinging","Shoulders"],
+  ["Triceps pushdown (rope or bar)",3,"10–15","60–90 s","Elbows pinned to sides","Triceps"],
+  ["Machine chest press / Pec deck",2,"8–12","2 min","Press: 8–12 · Pec deck: 12–15","Chest"],
+  ["Cross-body triceps extension (cable, one arm)",2,"10–15 / arm","60 s","Pull across your face, full stretch","Triceps"],
+  ["Machine shoulder press",2,"8–12","2 min","Stop 2–3 reps short","Shoulders"],
+  ["Pec deck / Machine chest press",2,"12–15","90 s","Whichever you didn't do at #4","Chest"]]},
+ {k:"pull",d:"Tue",t:"Pull",f:"Back thickness + width, rear delts, biceps, forearms · ~55 min",n:"",ex:[
+  ["Chest-supported row (T-bar / machine)",3,"8–12","2–3 min","Chest on pad, squeeze 1 s","Back"],
+  ["Lat pulldown or pull-up",3,"6–12","2 min","Full stretch at top","Back"],
+  ["Seated cable row, wide, elbows out",2,"10–12","2 min","Pull to lower chest","Back"],
   ["Reverse pec deck / rear-delt fly",3,"12–20","60–90 s","Lead with elbows, no shrug","Shoulders"],
-  ["Lateral raise (DB or cable)",3,"12–20","60–90 s","Last set + partials","Shoulders"],
-  ["EZ-bar curl",2,"8–12","90 s","Strict","Biceps"],
-  ["EZ-bar skull crusher (behind head)",2,"8–12","90 s","","Triceps"],
-  ["Reverse wrist curl",2,"15–20","60 s","","Forearms"]]},
- {k:"fri",d:"Fri",t:"Lower B",f:"Hamstrings + glutes",n:"Warm up 5 min, 3 ramp-up sets on the RDL.",ex:[
-  ["Romanian deadlift",3,"6–10","3 min","Hips back, bar close","Hamstrings"],
-  ["Hip thrust (barbell / machine)",3,"8–12","2 min","Chin tucked, 1 s squeeze","Glutes"],
-  ["Leg press (feet high & wide)",2,"12–15","2 min","","Hamstrings"],
-  ["Seated leg curl",3,"10–15","90 s","3 s lowering","Hamstrings"],
-  ["Seated calf raise",4,"12–20","60 s","Pause in stretch","Calves"],
-  ["Cable crunch",3,"10–15","60 s","Round spine, hips still","Core"]]},
- {k:"sat",d:"Sat",t:"Arms + weak points",f:"Arms, forearms, upper chest, rear delts",n:"A1/A2 and B1/B2 are supersets: do one, then the other, then rest.",ex:[
+  ["Incline dumbbell curl",3,"10–15","90 s","Arms hang behind body","Biceps"],
+  ["Hammer curl",2,"10–15","60–90 s","Thicker arms + forearms","Biceps"],
+  ["Wrist curl",2,"15–25","60 s","Roll to fingertips, curl up","Forearms"]]},
+ {k:"legs",d:"Wed",t:"Legs",f:"Quads, hamstrings, glutes, calves · ~60 min. Rest day tomorrow",n:"",ex:[
+  ["Hack squat / high-bar squat",3,"6–10","3 min","Deep, neutral spine, 2–3 reps in reserve","Quads"],
+  ["Romanian deadlift",3,"6–10","2–3 min","Hips back, bar close","Hamstrings"],
+  ["Leg press",2,"10–15","2 min","Full depth, no lockout","Quads"],
+  ["Seated leg curl",3,"10–15","90 s","Lean forward, 3 s lowering","Hamstrings"],
+  ["Leg extension",2,"12–15","90 s","1 s squeeze at top","Quads"],
+  ["Standing calf raise",4,"8–15","60–90 s","2 s pause at bottom","Calves"],
+  ["Hanging knee raise",2,"10–15","60 s","Curl the pelvis up","Core"]]},
+ {k:"full",d:"Fri",t:"Full body",f:"Light second hit for everything · ~45 min. Keep 2–3 reps in reserve on all lifts",n:"",ex:[
+  ["Low-incline press (Smith / barbell)",2,"6–10","2 min","Touch high on chest","Chest"],
+  ["One-arm dumbbell row",2,"8–12 / arm","90 s","Big stretch at bottom","Back"],
+  ["Bulgarian split squat",2,"8–12 / leg","2 min","Controlled, no grinding","Quads"],
+  ["Hip thrust (barbell / machine)",2,"8–12","2 min","Chin tucked, 1 s squeeze","Glutes"],
+  ["Lateral raise (DB or cable)",2,"12–20","60 s","","Shoulders"],
+  ["Seated calf raise",2,"12–20","60 s","Pause in stretch","Calves"],
+  ["Cable crunch",2,"10–15","60 s","Round spine, hips still","Core"]]},
+ {k:"arms",d:"Sat",t:"Arms & shoulders",f:"Biceps, triceps, forearms, rear delts + an upper-chest touch · ~50 min",n:"A1/A2 and B1/B2 are supersets: do one, then the other, then rest.",ex:[
   ["Incline machine / DB press",2,"8–12","2 min","","Chest"],
-  ["Low-to-high cable fly",2,"12–15","90 s","Finish at chin height","Chest"],
-  ["One-arm DB row / Meadows row",2,"10–12 / arm","90 s","Big stretch","Back"],
-  ["Reverse pec deck / face pull",3,"15–20","60 s","","Shoulders"],
+  ["Reverse pec deck / face pull",3,"15–20","60 s","Rear delts + posture","Shoulders"],
   ["A1 · Preacher / Bayesian curl",3,"10–15","—","Full stretch","Biceps"],
-  ["A2 · Rope pushdown",3,"10–15","90 s","Spread rope at bottom","Triceps"],
-  ["B1 · Hammer curl",3,"10–15","—","","Biceps"],
-  ["B2 · Overhead DB triceps ext.",2,"10–15","90 s","Deep stretch","Triceps"],
-  ["Reverse-grip EZ curl",3,"12–15","60–90 s","","Biceps"],
+  ["A2 · Overhead DB triceps ext.",3,"10–15","90 s after pair","Deep stretch","Triceps"],
+  ["B1 · Reverse-grip EZ curl",2,"12–15","—","Top of forearm","Biceps"],
+  ["B2 · Rope pushdown",2,"10–15","90 s after pair","","Triceps"],
   ["Wrist curl",2,"15–25","60 s","","Forearms"],
-  ["Farmer's carry / dead hang",3,"30–40 m","90 s","Heavy","Forearms"],
-  ["Ab wheel / plank 45–60 s",3,"8–12","60 s","Ribs down","Core"]]}
+  ["Farmer's carry / dead hang",2,"30–40 m","90 s","Heavy, grip","Forearms"]]}
 ];
+const WU={
+ push:[["Easy bike, rower or incline walk","5 min"],["Arm circles, forward + back","10 each"],["Band pull-aparts","15"],["Push-up plus (scapular push-up)","10"],["Open-book thoracic rotation","6 / side"],["Band dislocates","10"],["Ramp-up: incline DB press","50% × 8, 70% × 4, 85% × 2"]],
+ pull:[["Easy rower or bike","5 min"],["Band pull-aparts","15"],["Band external rotation","12 / side"],["Wall slides","10"],["Dead hang","20–30 s"],["Ramp-up: chest-supported row","50% × 10, 75% × 4"],["Ramp-up: pulldown","1 light set × 8"]],
+ legs:[["Easy bike","5 min"],["Leg swings, front–back + side","10 / side each"],["Deep squat hold (hold a post)","30 s"],["Ankle rocks, knee over toes","10 / side"],["Glute bridge","10"],["Bodyweight hip hinge","10"],["Ramp-up: squat","empty × 8, 50% × 5, 70% × 3, 85% × 1–2"],["Ramp-up: RDL","bar × 8, 60% × 4"]],
+ full:[["Easy bike or rower","5 min"],["Cat–cow","8"],["Leg swings, front–back","10 / side"],["Band pull-aparts","15"],["Glute bridge","10"],["Bodyweight split squat","5 / leg"],["Ramp-up: low-incline press","bar × 10, 60% × 5"]],
+ arms:[["Easy rower or bike","5 min"],["Arm circles + band pull-aparts","10 each + 15"],["Wrist circles + fist open–close","20 each"],["Push-up plus","10"],["Light band curls + band pushdowns","20 each"],["Ramp-up: incline press","50% × 8, 75% × 4"]]
+};
+const CD={
+ push:[["Easy walk","3 min"],["Doorway chest stretch","30–45 s / side"],["Overhead triceps stretch","30 s / side"],["Cross-body shoulder stretch","30 s / side"],["Chin tucks (posture)","10"],["Slow breathing, lying, feet on bench","1 min"]],
+ pull:[["Easy walk","3 min"],["Lat stretch (kneel, hands on bench)","30–45 s"],["Cross-body rear-delt stretch","30 s / side"],["Biceps wall stretch","30 s / side"],["Wrist flexor + extensor stretch","30 s each"],["Chin tucks (posture)","10"]],
+ legs:[["Easy walk","3 min"],["Couch stretch (quads + hip flexors)","45 s / side"],["Lying hamstring stretch (strap/towel)","45 s / side"],["Figure-4 glute stretch","30 s / side"],["Wall calf stretch, straight + bent knee","30 s each / side"],["Slow breathing","1 min"]],
+ full:[["Easy walk","3 min"],["Couch stretch","30 s / side"],["Doorway chest stretch","30 s / side"],["Figure-4 glute stretch","30 s / side"],["Lat stretch","30 s"],["Crocodile breathing (face down)","1 min"]],
+ arms:[["Easy walk","2–3 min"],["Biceps wall stretch","30 s / side"],["Overhead triceps stretch","30 s / side"],["Wrist flexor + extensor stretch","30 s each"],["Doorway chest stretch","30 s / side"],["Child's pose","45 s"]]
+};
 
-const DAY_OFFSET={mon:0,tue:1,thu:3,fri:4,sat:5}; // days since Monday, Wed/Sun are rest days
-const WEEKDAY_KEY={1:"mon",2:"tue",4:"thu",5:"fri",6:"sat"}; // JS getDay() -> our day key
+const DAY_OFFSET={push:0,pull:1,legs:2,full:4,arms:5}; // days since Monday, Thu/Sun are rest days
+const WEEKDAY_KEY={1:"push",2:"pull",3:"legs",5:"full",6:"arms"}; // JS getDay() -> our day key
 
 const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const KEYS={TAB:"gs-tab",HISTORY:"gs-history",VIEW:"gs-view",THEME:"gs-theme",ACCENT:"gs-accent",FONT:"gs-font",LEGACY_TICKS:"gs-ticks"};
@@ -232,7 +254,7 @@ function weekMonday(d){const dow=(d.getDay()+6)%7;const mon=new Date(d);mon.setD
 function dayTotal(d){return d.ex.reduce((s,e)=>s+e[1],0)}
 function dayByKey(k){return DAYS.find(x=>x.k===k)}
 
-const todayIdx=(()=>{const w=new Date().getDay();return {1:0,2:1,4:2,5:3,6:4}[w]??null})();
+const todayIdx=(()=>{const w=new Date().getDay();return {1:0,2:1,3:2,5:3,6:4}[w]??null})();
 let cur=store.get(KEYS.TAB); if(cur==null||!DAYS[cur]) cur=todayIdx??0;
 let history=store.get(KEYS.HISTORY)||{};
 
@@ -298,11 +320,13 @@ if(window.matchMedia){
   });
 }
 
-function isTrained(iso,dayKey){const e=history[iso];return !!(e && e.day===dayKey && Object.values(e.ticks).some(Boolean))}
+function isSetTick(id){return /^\d+-\d+$/.test(id)} // excludes warm-up ("w0") / cool-down ("c0") checklist ticks
+function setTicksDone(ticks){return Object.entries(ticks).filter(([id,on])=>on&&isSetTick(id)).length}
+function isTrained(iso,dayKey){const e=history[iso];return !!(e && e.day===dayKey && setTicksDone(e.ticks)>0)}
 function ticksForToday(dayKey){const e=history[todayISO()];return (e && e.day===dayKey)?e.ticks:{}}
 
 function renderTabs(){
-  tabsEl.innerHTML=DAYS.map((d,i)=>`<button class="tab" role="tab" id="tab-${d.k}" aria-selected="${i===cur}" data-i="${i}">${d.d}<small>${d.t.split(" ")[0]==="Arms"?"Arms":d.t}</small></button>`).join("");
+  tabsEl.innerHTML=DAYS.map((d,i)=>`<button class="tab" role="tab" id="tab-${d.k}" aria-selected="${i===cur}" data-i="${i}">${d.d}<small>${d.t==="Arms & shoulders"?"Arms":d.t}</small></button>`).join("");
 }
 function renderDay(){
   const d=DAYS[cur], t=ticksForToday(d.k);
@@ -313,17 +337,30 @@ function renderDay(){
     done+=c; total+=sets;
     return `<li class="ex${c===sets?" complete":""}"><div class="top"><span class="num">${i+1}</span><div><div class="name">${name}</div><div class="meta"><span class="chip">${sets} × ${reps}</span><span class="chip rest">Rest ${rest}</span></div></div></div>${cue?`<p class="cue">${cue}</p>`:""}<div class="sets">${boxes}</div></li>`;
   }).join("");
-  dayEl.innerHTML=`<div class="dayhead"><h2>${d.d} · ${d.t}</h2><span class="progress">${done}/${total} sets</span></div><p class="note">${d.f}. ${d.n}</p><ol class="list">${items}</ol>`;
+  const block=(kind,title,time,rows,hint)=>{
+    const li=rows.map((r,i)=>{const on=!!t[kind+i]; return `<li><button class="chk" type="button" aria-pressed="${on}" data-c="${kind+i}"><span class="box">${on?"✓":""}</span><span class="cn">${r[0]}</span><span class="cd">${r[1]}</span></button></li>`}).join("");
+    const n=rows.filter((r,i)=>t[kind+i]).length;
+    return `<section class="phase${n===rows.length?" complete":""}"><div class="ph"><h3>${title}</h3><span class="progress">${time} · ${n}/${rows.length}</span></div>${hint?`<p class="cue0">${hint}</p>`:""}<ul class="cl">${li}</ul></section>`;
+  };
+  dayEl.innerHTML=`<div class="dayhead"><h2>${d.d} · ${d.t}</h2><span class="progress">${done}/${total} sets</span></div><p class="note">${d.f}.${d.n?" "+d.n:""}</p>`
+    +block("w","Warm-up","~10 min",WU[d.k],"Ramp-up % = % of your working weight. Ramp-up sets are easy and don't count as work sets.")
+    +`<h3 class="mid">Workout</h3><ol class="list">${items}</ol>`
+    +block("c","Cool-down","~6–8 min",CD[d.k],"Relax into each stretch; mild tension, no pain.");
 }
-function toggleSet(exIdx,setIdx){
-  const dayKey=DAYS[cur].k, iso=todayISO(), id=exIdx+"-"+setIdx;
+function toggleTickId(id){
+  const dayKey=DAYS[cur].k, iso=todayISO();
   if(!history[iso] || history[iso].day!==dayKey) history[iso]={day:dayKey,ticks:{}};
   history[iso].ticks[id]=!history[iso].ticks[id];
   store.set(KEYS.HISTORY,history);
 }
 
 tabsEl.addEventListener("click",e=>{const b=e.target.closest(".tab"); if(!b)return; cur=+b.dataset.i; store.set(KEYS.TAB,cur); renderTabs(); renderDay(); window.scrollTo({top:0});});
-dayEl.addEventListener("click",e=>{const b=e.target.closest(".set"); if(!b)return; toggleSet(+b.dataset.e,+b.dataset.s); renderDay();});
+dayEl.addEventListener("click",e=>{
+  const b=e.target.closest(".set,.chk"); if(!b) return;
+  const id = b.dataset.c!==undefined ? b.dataset.c : (b.dataset.e+"-"+b.dataset.s);
+  toggleTickId(id);
+  renderDay();
+});
 document.getElementById("reset").addEventListener("click",()=>{
   const iso=todayISO();
   if(history[iso] && history[iso].day===DAYS[cur].k){ delete history[iso]; store.set(KEYS.HISTORY,history); }
@@ -377,7 +414,7 @@ function renderVolumeChart(sessions){
   return `<svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Sets completed per session">${bars}</svg>`;
 }
 function renderConsistencyGrid(weeks){
-  const cols=["mon","tue","thu","fri","sat"];
+  const cols=Object.keys(DAY_OFFSET);
   const today=new Date(); today.setHours(0,0,0,0);
   const thisMon=weekMonday(today);
   const header=`<div></div>`+cols.map(k=>`<div class="dow">${DAYS.find(d=>d.k===k).d}</div>`).join("");
@@ -397,12 +434,12 @@ function renderConsistencyGrid(weeks){
 }
 function sessionList(){
   return Object.keys(history)
-    .filter(iso=>Object.values(history[iso].ticks).some(Boolean))
+    .filter(iso=>setTicksDone(history[iso].ticks)>0)
     .sort()
     .map(iso=>{
       const e=history[iso], d=dayByKey(e.day);
-      const total=d?dayTotal(d):Object.keys(e.ticks).length;
-      const done=Object.values(e.ticks).filter(Boolean).length;
+      const total=d?dayTotal(d):Object.keys(e.ticks).filter(isSetTick).length;
+      const done=setTicksDone(e.ticks);
       return {iso,day:e.day,done,total};
     });
 }
@@ -421,7 +458,7 @@ function muscleGroupStats(){
     const e=history[iso], d=dayByKey(e.day);
     if(!d) return;
     Object.entries(e.ticks).forEach(([id,on])=>{
-      if(!on) return;
+      if(!on||!isSetTick(id)) return;
       const exIdx=Number(id.split("-")[0]);
       const ex=d.ex[exIdx]; if(!ex) return;
       const group=ex[5]||"Other";
@@ -530,8 +567,8 @@ function renderStats(){
 // ---- History (browse by date + compare periods) ----
 function histRow(iso){
   const e=history[iso], d=dayByKey(e.day);
-  const total=d?dayTotal(d):Object.keys(e.ticks).length;
-  const done=Object.values(e.ticks).filter(Boolean).length;
+  const total=d?dayTotal(d):Object.keys(e.ticks).filter(isSetTick).length;
+  const done=setTicksDone(e.ticks);
   const label=d?`${d.d} · ${d.t}`:e.day;
   return `<div class="hist-row${iso===historySelectedDate?" active":""}" data-iso="${iso}"><div><b>${label}</b><span class="hbar-sub">${fmtLongDate(iso)}</span></div><div class="hist-row-val">${done}/${total} sets</div></div>`;
 }
@@ -539,13 +576,13 @@ function renderHistDetail(iso){
   const el=document.getElementById("histDetail");
   if(!el) return;
   const e=history[iso];
-  if(!e || !Object.values(e.ticks).some(Boolean)){
+  if(!e || setTicksDone(e.ticks)===0){
     const wd=WEEKDAY_KEY[new Date(iso+"T00:00:00").getDay()];
     el.innerHTML=`<p class="empty-hint">${wd? "No session logged for "+fmtLongDate(iso)+"." : fmtLongDate(iso)+" is a scheduled rest day."}</p>`;
     return;
   }
   const d=dayByKey(e.day);
-  const done=Object.values(e.ticks).filter(Boolean).length, total=d?dayTotal(d):Object.keys(e.ticks).length;
+  const done=setTicksDone(e.ticks), total=d?dayTotal(d):Object.keys(e.ticks).filter(isSetTick).length;
   const rows=d? d.ex.map((ex,i)=>{
     const [name,sets]=ex;
     let boxes="";
